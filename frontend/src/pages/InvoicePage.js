@@ -12,7 +12,7 @@ import {
   downloadBlob, openWindowImmediately, navigateWindow
 } from '../utils/helpers';
 
-const emptyItem = { productId: null, name: '', quantity: 1, amount: '', total: 0 };
+const emptyItem = { productId: null, name: '', quantity: 1, mrpRate: '', rate: '', total: 0 };
 const GST_RATE = 18;
 
 // ─── Post-save modal ──────────────────────────────────────────────────────────
@@ -284,7 +284,9 @@ export default function InvoicePage({ prefillData = null, editId = null }) {
   const navigate = useNavigate();
   const [invoiceNo, setInvoiceNo] = useState('');
   const [date, setDate] = useState(
-  new Date().toISOString()
+  new Date().toLocaleString('sv-SE', {
+    timeZone: 'Asia/Kolkata'
+  }).replace(' ', 'T')
 );
   const [customer, setCustomer]   = useState({ name: '', phone: '', address: '' });
   const [items, setItems]         = useState([{ ...emptyItem }]);
@@ -307,7 +309,10 @@ export default function InvoicePage({ prefillData = null, editId = null }) {
   useEffect(() => {
     if (prefillData) {
       setInvoiceNo(prefillData.invoiceNo || '');
-      setDate(prefillData.date ? new Date(prefillData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
+    setDate(
+  prefillData.date ||
+  new Date().toLocaleString('sv-SE').replace(' ', 'T')
+);
       setCustomer(prefillData.customer || { name: '', phone: '', address: '' });
       setItems(prefillData.items?.length ? prefillData.items : [{ ...emptyItem }]);
     }
@@ -337,12 +342,15 @@ export default function InvoicePage({ prefillData = null, editId = null }) {
 
   const selectProduct = (idx, product) => {
     const newItems = [...items];
+    const mrp = product.amount;
+    const calculatedRate = mrp / 1.18; // Rate = MRP / 1.18
     newItems[idx] = {
       productId: product._id,
       name: product.name,
       quantity: newItems[idx].quantity || 1,
-      amount: product.amount,
-      total: (newItems[idx].quantity || 1) * product.amount
+      mrpRate: mrp,
+      rate: calculatedRate,
+      total: (newItems[idx].quantity || 1) * calculatedRate
     };
     setItems(newItems);
     setSearchOpen(null); setSearchQuery('');
@@ -351,10 +359,17 @@ export default function InvoicePage({ prefillData = null, editId = null }) {
   const updateItem = (idx, field, value) => {
     const newItems = [...items];
     newItems[idx] = { ...newItems[idx], [field]: value };
-    if (field === 'quantity' || field === 'amount') {
-      const qty = field === 'quantity' ? Number(value) : Number(newItems[idx].quantity);
-      const amt = field === 'amount'   ? Number(value) : Number(newItems[idx].amount);
-      newItems[idx].total = qty * amt;
+    
+    // If MRP Rate changes, auto-calculate Rate as MRP / 1.18
+    if (field === 'mrpRate') {
+      const mrp = Number(value);
+      newItems[idx].rate = mrp / 1.18; // Rate = MRP / 1.18
+    }
+    
+    if (field === 'quantity' || field === 'rate' || field === 'mrpRate') {
+      const qty = Number(newItems[idx].quantity);
+      const rate = Number(newItems[idx].rate);
+      newItems[idx].total = qty * rate;
     }
     setItems(newItems);
   };
@@ -382,14 +397,16 @@ const sgstAmount = gstAmount / 2;
 const totalAmount = subtotal + gstAmount;
   const buildPayload = () => ({
   invoiceNo,
-  date: new Date(date),
+  date,
   customer,
 
   items: items.map(i => ({
     productId: i.productId || null,
     name: i.name,
     quantity: Number(i.quantity),
-    amount: Number(i.amount),
+    amount: Number(i.rate),
+    mrpRate: Number(i.mrpRate),
+    rate: Number(i.rate),
     total: Number(i.total)
   })),
 
@@ -414,7 +431,7 @@ const totalAmount = subtotal + gstAmount;
     if (!invoiceNo)                              return 'Invoice number required';
     if (!customer.name)                          return 'Customer name required';
     if (!customer.phone)                         return 'Customer phone required';
-    if (items.some(i => !i.name || !i.amount))  return 'All items need name and amount';
+    if (items.some(i => !i.name || !i.rate))  return 'All items need name and rate';
     return null;
   };
 
@@ -475,21 +492,21 @@ const totalAmount = subtotal + gstAmount;
             </div>
             <div>
               <label className="label"><FiCalendar className="inline mr-1" size={11} />Date</label>
-              <input
+             <input
   type="date"
   className="input-field"
-  value={date ? new Date(date).toISOString().split('T')[0] : ''}
+  value={date ? date.split('T')[0] : ''}
   onChange={(e) => {
 
     const selectedDate = e.target.value;
 
     const now = new Date();
 
-    const fullDateTime = new Date(
-      `${selectedDate}T${now.toTimeString().split(' ')[0]}`
-    );
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mi = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
 
-    setDate(fullDateTime.toISOString());
+    setDate(`${selectedDate}T${hh}:${mi}:${ss}`);
   }}
 />
             </div>
@@ -522,8 +539,9 @@ const totalAmount = subtotal + gstAmount;
 
           <div className="space-y-3">
             <div className="hidden md:grid grid-cols-12 gap-2 text-xs font-semibold text-gold-600 uppercase tracking-wider pb-2 border-b border-dark-700">
-              <div className="col-span-5">Product / Description</div>
-              <div className="col-span-2 text-center">Qty</div>
+              <div className="col-span-4">Product / Description</div>
+              <div className="col-span-1 text-center">Qty</div>
+              <div className="col-span-2 text-right">MRP Rate (₹)</div>
               <div className="col-span-2 text-right">Rate (₹)</div>
               <div className="col-span-2 text-right">Total (₹)</div>
               <div className="col-span-1"></div>
@@ -532,7 +550,7 @@ const totalAmount = subtotal + gstAmount;
             {items.map((item, idx) => (
               <div key={idx} className="grid grid-cols-12 gap-2 items-center">
                 {/* Product name + search */}
-                <div className="col-span-12 md:col-span-5 relative" ref={searchOpen === idx ? searchRef : null}>
+                <div className="col-span-12 md:col-span-4 relative" ref={searchOpen === idx ? searchRef : null}>
                   <div className="flex gap-1">
                     <input
                       className="input-field flex-1"
@@ -572,15 +590,22 @@ const totalAmount = subtotal + gstAmount;
                 </div>
 
                 {/* Qty */}
-                <div className="col-span-4 md:col-span-2">
+                <div className="col-span-3 md:col-span-1">
                   <input className="input-field text-center" type="number" min="1" value={item.quantity}
                     onChange={e => updateItem(idx, 'quantity', e.target.value)} />
                 </div>
 
+                {/* MRP Rate */}
+                <div className="col-span-4 md:col-span-2">
+                  <input className="input-field text-right" type="number" placeholder="0.00" value={item.mrpRate}
+                    onChange={e => updateItem(idx, 'mrpRate', e.target.value)} />
+                </div>
+
                 {/* Rate */}
                 <div className="col-span-4 md:col-span-2">
-                  <input className="input-field text-right" type="number" placeholder="0.00" value={item.amount}
-                    onChange={e => updateItem(idx, 'amount', e.target.value)} />
+                  <div className="input-field text-right font-semibold text-gold-400 cursor-default select-none">
+                    ₹{(Number(item.rate) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </div>
                 </div>
 
                 {/* Total */}
@@ -609,11 +634,11 @@ const totalAmount = subtotal + gstAmount;
                 <span className="font-mono text-dark-200">₹{subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
               </div>
              <div className="flex justify-between text-sm">
-  <span className="text-dark-400">
+  <span className="text-dark-500">
     CGST ({cgstRate}%)
   </span>
 
-  <span className="font-mono text-dark-200">
+  <span className="font-mono text-dark-300">
     ₹{cgstAmount.toLocaleString('en-IN', {
       minimumFractionDigits: 2
     })}
@@ -621,18 +646,18 @@ const totalAmount = subtotal + gstAmount;
 </div>
 
 <div className="flex justify-between text-sm">
-  <span className="text-dark-400">
+  <span className="text-dark-500">
     SGST ({sgstRate}%)
   </span>
 
-  <span className="font-mono text-dark-200">
+  <span className="font-mono text-dark-300">
     ₹{sgstAmount.toLocaleString('en-IN', {
       minimumFractionDigits: 2
     })}
   </span>
 </div>
               <div className="flex justify-between text-base font-bold bg-dark-900 rounded-lg px-3 py-2 mt-2">
-                <span className="text-gold-400">Total</span>
+                <span className="text-gold-400">Final Total</span>
                 <span className="font-mono text-gold-400 text-lg">₹{totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
               </div>
             </div>

@@ -724,16 +724,15 @@ router.post('/download', async (req, res) => {
         ? generateQuotationHTML(invoice, shop)
         : generateInvoiceHTML(invoice, shop);
 
-    const puppeteer = require('puppeteer');
+   const puppeteer = require('puppeteer-core');
+const chromium = require('@sparticuz/chromium');
 
-    browser = await puppeteer.launch({
-      headless: 'new',
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage'
-      ]
-    });
+browser = await puppeteer.launch({
+  args: chromium.args,
+  defaultViewport: chromium.defaultViewport,
+  executablePath: await chromium.executablePath(),
+  headless: chromium.headless,
+});
 
     const page = await browser.newPage();
 

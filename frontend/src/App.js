@@ -7,6 +7,7 @@ import InvoicePage from './pages/InvoicePage';
 import HistoryPage from './pages/HistoryPage';
 import SettingsPage from './pages/SettingsPage';
 import EditInvoicePage from './pages/EditInvoicePage';
+import AdminLoginPage from './pages/adminlogin';
 
 function App() {
   return (
@@ -25,15 +26,25 @@ function App() {
         }}
       />
       <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/products" replace />} />
-          <Route path="products" element={<ProductsPage />} />
-          <Route path="invoice" element={<InvoicePage />} />
-          <Route path="invoice/edit/:id" element={<EditInvoicePage />} />
-          <Route path="history" element={<HistoryPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-        </Route>
-      </Routes>
+
+  {/* Login Page */}
+  <Route path="/admin" element={<AdminLoginPage />} />
+
+  {/* Layout Pages */}
+  <Route path="/" element={<Layout />}>
+    
+    {/* Landing Page */}
+    <Route index element={<Navigate to="/admin" replace />} />
+
+    <Route path="products" element={<ProductsPage />} />
+    <Route path="invoice" element={<InvoicePage />} />
+    <Route path="invoice/edit/:id" element={<EditInvoicePage />} />
+    <Route path="history" element={<HistoryPage />} />
+    <Route path="settings" element={<SettingsPage />} />
+
+  </Route>
+
+</Routes>
     </Router>
   );
 }
