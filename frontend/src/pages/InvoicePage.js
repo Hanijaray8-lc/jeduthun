@@ -140,31 +140,33 @@ Download PDF: ${pdfLink}`
     );
 
     const html = res.data.html;
-    const fileName = `Quotation-${invoice.invoiceNo}.pdf`;
-
-    const element = document.createElement('div');
-    element.innerHTML = html;
-
-    const opt = {
-      margin: 0,
-      filename: fileName,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { format: 'a4', orientation: 'portrait' }
+    
+    // Create new window, write HTML, then print to PDF
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+      toast.error('Please allow popups to download quotations');
+      setLoadingDlQuote(false);
+      return;
+    }
+    
+    printWin.document.write(html);
+    printWin.document.close();
+    
+    // Wait for images to load before printing
+    printWin.onload = () => {
+      setTimeout(() => {
+        printWin.print();
+        toast.success('Print dialog opened - select "Save as PDF"');
+        setLoadingDlQuote(false);
+      }, 500);
     };
-
-    html2pdf().set(opt).from(element).save();
-
-    toast.success('Quotation PDF downloaded!');
 
   } catch (err) {
 
     console.error('❌ Download error:', err);
-    toast.error('Failed to download quotation');
-
-  } finally {
-
+    toast.error('Failed to generate quotation');
     setLoadingDlQuote(false);
+
   }
 };
 

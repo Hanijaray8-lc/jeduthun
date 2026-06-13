@@ -331,7 +331,7 @@ function generateInvoiceHTML(invoice, shop) {
  <div class="shop-header">
 
   <img 
-    src="http://localhost:5000/public/logo.png"
+    src="https://jeduthun.onrender.com/public/logo.png"
     class="logo"
   />
 
@@ -546,7 +546,20 @@ function generateQuotationHTML(invoice, shop) {
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: Arial, sans-serif; font-size: 12px; color: #111; background: white; }
     .page { width: 210mm; min-height: 297mm; padding: 15mm; margin: 0 auto; }
-    .header { background: linear-gradient(135deg, #1a1a1a, #2d2d2d); color: #D4AF37; padding: 20px; margin-bottom: 20px; border-radius: 4px; }
+    .header { 
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a1a, #2d2d2d); 
+      color: #D4AF37; 
+      padding: 30px 20px 20px 20px;
+      margin-bottom: 20px; 
+      border-radius: 4px;
+      text-align: center;
+      border-bottom: 3px solid #B8860B;
+    }
     .shop-name { font-size: 24px; font-weight: bold; letter-spacing: 2px; }
     .shop-sub { font-size: 10px; color: #c0a060; margin-top: 4px; }
     .quot-title { font-size: 22px; font-weight: bold; letter-spacing: 4px; text-align: center; color: #1a1a1a; border: 2px solid #B8860B; padding: 8px; margin-bottom: 15px; text-transform: uppercase; }
@@ -559,24 +572,14 @@ function generateQuotationHTML(invoice, shop) {
     .notes-box { background: #fff8e7; border-left: 4px solid #ff8c00; padding: 10px; margin-bottom: 15px; font-size: 11px; }
     .contact-box { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
     .footer-social { text-align: center; background: #1a1a1a; color: #D4AF37; padding: 8px; border-radius: 4px; font-size: 10px; margin-top: 10px; }
-    .header{
-  position:relative;
-  text-align:center;
-  border-bottom:3px solid #B8860B;
-  padding-bottom:12px;
-  margin-bottom:15px;
-}
-
-.logo{
-  position:absolute;
-  top:0;
-  right:0;
-  width:100px;
-  height:100px;
-  object-fit:contain;
-}
-
-
+    .logo {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
   </style>
 </head>
 <body>
@@ -584,7 +587,7 @@ function generateQuotationHTML(invoice, shop) {
  <div class="header">
 
   <img 
-    src="http://localhost:5000/public/logo.png"
+    src="https://jeduthun.onrender.com/public/logo.png"
     class="logo"
   />
 
@@ -806,7 +809,7 @@ router.post('/create-share-link', async (req, res) => {
 
     // frontend url
     const BASE_URL =
-      process.env.FRONTEND_URL || 'http://localhost:3000';
+      process.env.FRONTEND_URL || 'https://jeduthun.onrender.com';
 
     // generate public link
     const link = `${BASE_URL}/download-pdf/${invoice._id}?type=${type}`;
