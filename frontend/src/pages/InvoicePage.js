@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import html2pdf from 'html2pdf.js';
 import {
   FiPlus, FiTrash2, FiSearch, FiPrinter, FiShare2, FiSave,
   FiUser, FiPhone, FiMapPin, FiHash, FiCalendar, FiDownload,
@@ -23,8 +24,28 @@ function SavedModal({ invoice, shopData, onClose }) {
   const [loadingPrintBill, setLoadingPrintBill]   = useState(false);
   const [loadingPrintQuote, setLoadingPrintQuote] = useState(false);
 
-  const buildMsg = (type) =>
-    `Dear ${invoice.customer.name},\n\nYour ${type === 'quotation' ? 'Quotation' : 'Invoice'} #${invoice.invoiceNo} from Jeduthun Musicals.\nTotal: ₹${invoice.totalAmount?.toFixed(2)}\n\nThank you!\n- Jeduthun Musicals\n  ${shopData?.phone2 || '+91 8838858275'}`;
+  const buildItemizedMsg = (type, items) => {
+    const itemList = items.map((item) => 
+      `• ${item.name} (Qty: ${item.quantity}) - MRP: ₹${Number(item.mrpRate || 0).toFixed(2)}, Rate: ₹${Number(item.rate || item.amount || 0).toFixed(2)} = ₹${Number(item.total || 0).toFixed(2)}`
+    ).join('\n');
+    
+    return `Dear ${invoice.customer.name},
+
+Your ${type === 'quotation' ? 'Quotation' : 'Invoice'} #${invoice.invoiceNo}
+
+📋 Items:
+${itemList}
+
+💰 Summary:
+Subtotal: ₹${invoice.subtotal?.toFixed(2)}
+GST (${invoice.gstRate}%): ₹${invoice.gstAmount?.toFixed(2)}
+Total: ₹${invoice.totalAmount?.toFixed(2)}
+
+Thank you!
+Jeduthun Musicals
+📞 ${shopData?.phone1 || '04637-213875'}
+📱 ${shopData?.phone2 || '+91 8838858275'}`;
+  };
 
   // KEY FIX: open window synchronously BEFORE any await
  const shareBill = async () => {
@@ -42,18 +63,14 @@ function SavedModal({ invoice, shopData, onClose }) {
 
     const pdfLink = res.data.pdfUrl;
 
+    const itemizedMsg = buildItemizedMsg('invoice', invoice.items);
+
     const whatsappUrl = getWhatsAppUrl(
       invoice.customer.phone,
 
-`Dear ${invoice.customer.name},
+`${itemizedMsg}
 
-Your Invoice #${invoice.invoiceNo}
-
-Download PDF:
-${pdfLink}
-
-Thank you!
-Jeduthun Musicals`
+Download PDF: ${pdfLink}`
     );
 
     navigateWindow(waWin, whatsappUrl);
@@ -86,18 +103,14 @@ Jeduthun Musicals`
 
     const pdfLink = res.data.pdfUrl;
 
+    const itemizedMsg = buildItemizedMsg('quotation', invoice.items);
+
     const whatsappUrl = getWhatsAppUrl(
       invoice.customer.phone,
 
-`Dear ${invoice.customer.name},
+`${itemizedMsg}
 
-Your Quotation #${invoice.invoiceNo}
-
-Download PDF:
-${pdfLink}
-
-Thank you!
-Jeduthun Musicals`
+Download PDF: ${pdfLink}`
     );
 
     navigateWindow(waWin, whatsappUrl);
@@ -121,29 +134,32 @@ Jeduthun Musicals`
 
   try {
 
-    const res = await pdfAPI.downloadPDF(
+    const res = await pdfAPI.generate(
       invoice._id,
       'quotation'
     );
 
-    const pdfLink = res.data.pdfUrl;
+    const html = res.data.html;
+    const fileName = `Quotation-${invoice.invoiceNo}.pdf`;
 
-    const a = document.createElement('a');
+    const element = document.createElement('div');
+    element.innerHTML = html;
 
-    a.href = pdfLink;
+    const opt = {
+      margin: 0,
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { format: 'a4', orientation: 'portrait' }
+    };
 
-    a.download = '';
+    html2pdf().set(opt).from(element).save();
 
-    document.body.appendChild(a);
-
-    a.click();
-
-    a.remove();
-
-    toast.success('Quotation downloaded!');
+    toast.success('Quotation PDF downloaded!');
 
   } catch (err) {
 
+    console.error('❌ Download error:', err);
     toast.error('Failed to download quotation');
 
   } finally {
@@ -342,7 +358,19 @@ export default function InvoicePage({ prefillData = null, editId = null }) {
 
   const selectProduct = (idx, product) => {
     const newItems = [...items];
-    const mrp = product.amount;
+    const mrp = product.amount || 0;
+    
+    console.log(`🎯 Product Selected - Item ${idx}:`, {
+      productName: product.name,
+      productAmount: product.amount,
+      mrp: mrp
+    });
+    
+    if (!mrp || mrp <= 0) {
+      toast.error('⚠️ Product MRP rate is invalid or not set. Please enter MRP manually.');
+      return;
+    }
+    
     const calculatedRate = mrp / 1.18; // Rate = MRP / 1.18
     newItems[idx] = {
       productId: product._id,
@@ -352,18 +380,28 @@ export default function InvoicePage({ prefillData = null, editId = null }) {
       rate: calculatedRate,
       total: (newItems[idx].quantity || 1) * calculatedRate
     };
+    
+    console.log(`✅ Item ${idx} Updated:`, newItems[idx]);
+    
     setItems(newItems);
-    setSearchOpen(null); setSearchQuery('');
+    setSearchOpen(null); 
+    setSearchQuery('');
+    toast.success(`${product.name} added! MRP: ₹${mrp.toFixed(2)}`);
   };
 
   const updateItem = (idx, field, value) => {
     const newItems = [...items];
     newItems[idx] = { ...newItems[idx], [field]: value };
     
-    // If MRP Rate changes, auto-calculate Rate as MRP / 1.18
     if (field === 'mrpRate') {
       const mrp = Number(value);
       newItems[idx].rate = mrp / 1.18; // Rate = MRP / 1.18
+      console.log(`🔄 MRP Updated - Item ${idx}:`, {
+        mrpInput: value,
+        mrpNumber: mrp,
+        calculatedRate: mrp / 1.18,
+        state: newItems[idx]
+      });
     }
     
     if (field === 'quantity' || field === 'rate' || field === 'mrpRate') {
@@ -371,6 +409,7 @@ export default function InvoicePage({ prefillData = null, editId = null }) {
       const rate = Number(newItems[idx].rate);
       newItems[idx].total = qty * rate;
     }
+    
     setItems(newItems);
   };
 
@@ -395,43 +434,55 @@ const cgstAmount = gstAmount / 2;
 const sgstAmount = gstAmount / 2;
 
 const totalAmount = subtotal + gstAmount;
-  const buildPayload = () => ({
-  invoiceNo,
-  date,
-  customer,
-
-  items: items.map(i => ({
-    productId: i.productId || null,
-    name: i.name,
-    quantity: Number(i.quantity),
-    amount: Number(i.rate),
-    mrpRate: Number(i.mrpRate),
-    rate: Number(i.rate),
-    total: Number(i.total)
-  })),
-
-  subtotal,
-
-  gstRate: GST_RATE,
-  gstAmount,
-
-  // NEW
-  cgstRate,
-  sgstRate,
-  cgstAmount,
-  sgstAmount,
-
-  totalAmount,
-  totalInWords: numberToWords(totalAmount),
-
-  type: 'invoice'
-});
+  const buildPayload = () => {
+    const payload = {
+      invoiceNo,
+      date,
+      customer,
+      items: items.map((i, idx) => {
+        const item = {
+          productId: i.productId || null,
+          name: i.name,
+          quantity: Number(i.quantity),
+          amount: Number(i.rate),
+          mrpRate: Number(i.mrpRate),
+          rate: Number(i.rate),
+          total: Number(i.total)
+        };
+        
+        console.log(`📦 Item ${idx}:`, {
+          name: i.name,
+          mrpRateInput: i.mrpRate,
+          mrpRateNumber: Number(i.mrpRate),
+          rateInput: i.rate,
+          rateNumber: Number(i.rate),
+          payload: item
+        });
+        
+        return item;
+      }),
+      subtotal,
+      gstRate: GST_RATE,
+      gstAmount,
+      cgstRate,
+      sgstRate,
+      cgstAmount,
+      sgstAmount,
+      totalAmount,
+      totalInWords: numberToWords(totalAmount),
+      type: 'invoice'
+    };
+    
+    console.log('📤 FINAL PAYLOAD:', JSON.stringify(payload.items[0], null, 2));
+    return payload;
+  };
 
   const validate = () => {
-    if (!invoiceNo)                              return 'Invoice number required';
-    if (!customer.name)                          return 'Customer name required';
-    if (!customer.phone)                         return 'Customer phone required';
-    if (items.some(i => !i.name || !i.rate))  return 'All items need name and rate';
+    if (!invoiceNo)                                       return 'Invoice number required';
+    if (!customer.name)                                  return 'Customer name required';
+    if (!customer.phone)                                 return 'Customer phone required';
+    if (items.some(i => !i.name || !i.rate))          return 'All items need name and rate';
+    if (items.some(i => !i.mrpRate || Number(i.mrpRate) <= 0))  return 'All items need valid MRP Rate (must be > 0)';
     return null;
   };
 
@@ -441,6 +492,8 @@ const totalAmount = subtotal + gstAmount;
     setSaving(true);
     try {
       const payload = buildPayload();
+      console.log('📤 Sending payload:', JSON.stringify(payload.items[0], null, 2));
+      
       let saved;
       if (editId) {
         const res = await invoiceAPI.update(editId, payload);
@@ -449,11 +502,24 @@ const totalAmount = subtotal + gstAmount;
       } else {
         const res = await invoiceAPI.create(payload);
         saved = res.data.data;
+        console.log('📥 Received from backend:', JSON.stringify(saved.items[0], null, 2));
         toast.success('Invoice saved!');
       }
       setSavedInvoice(saved);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Error saving invoice');
+      const message = err.response?.data?.message || 'Error saving invoice';
+      console.error('❌ Save error:', message);
+      toast.error(message);
+      
+      // If it's a duplicate invoice number error, refresh the next number
+      if (message.includes('E11000') || message.includes('duplicate')) {
+        invoiceAPI.getNextNumber()
+          .then(r => {
+            setInvoiceNo(r.data.nextNo);
+            toast.info(`Invoice number updated to ${r.data.nextNo}`);
+          })
+          .catch(() => {});
+      }
     } finally {
       setSaving(false);
     }
@@ -541,7 +607,7 @@ const totalAmount = subtotal + gstAmount;
             <div className="hidden md:grid grid-cols-12 gap-2 text-xs font-semibold text-gold-600 uppercase tracking-wider pb-2 border-b border-dark-700">
               <div className="col-span-4">Product / Description</div>
               <div className="col-span-1 text-center">Qty</div>
-              <div className="col-span-2 text-right">MRP Rate (₹)</div>
+              <div className="col-span-2 text-right">MRP Rate (₹) *</div>
               <div className="col-span-2 text-right">Rate (₹)</div>
               <div className="col-span-2 text-right">Total (₹)</div>
               <div className="col-span-1"></div>
@@ -597,8 +663,15 @@ const totalAmount = subtotal + gstAmount;
 
                 {/* MRP Rate */}
                 <div className="col-span-4 md:col-span-2">
-                  <input className="input-field text-right" type="number" placeholder="0.00" value={item.mrpRate}
-                    onChange={e => updateItem(idx, 'mrpRate', e.target.value)} />
+                  <input 
+                    className="input-field text-right font-semibold border-blue-500 bg-blue-900 bg-opacity-20" 
+                    type="number" 
+                    placeholder="MRP *" 
+                    value={item.mrpRate}
+                    onChange={e => updateItem(idx, 'mrpRate', e.target.value)}
+                    required
+                  />
+                  {/* {!item.mrpRate && <div className="text-xs text-red-500 mt-1">⚠️ Required</div>} */}
                 </div>
 
                 {/* Rate */}
@@ -628,6 +701,12 @@ const totalAmount = subtotal + gstAmount;
 
           {/* Totals */}
           <div className="mt-6 pt-4 border-t border-dark-700">
+            {/* <div className="mb-3 p-3 bg-yellow-900 bg-opacity-40 border border-yellow-700 rounded-lg">
+              <p className="text-xs text-yellow-300"><strong>⚠️ Required Fields:</strong> MRP Rate must be filled for all items. Select products from dropdown to auto-fill, or enter manually.</p>
+            </div>
+            <div className="mb-3 p-2.5 bg-blue-900 bg-opacity-30 border border-blue-700 rounded-lg">
+              <p className="text-xs text-blue-300">💡 <strong>Tip:</strong> Select products from dropdown to auto-fill MRP Rate, or enter manually. MRP Rate is required for invoice/quotation display.</p>
+            </div> */}
             <div className="ml-auto max-w-xs space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-dark-400">Subtotal</span>

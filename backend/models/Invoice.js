@@ -10,6 +10,8 @@ const invoiceItemSchema = new mongoose.Schema({
   //hsn: { type: String, default: '', trim: true },
   quantity: { type: Number, required: true, min: 1 },
   // unit: { type: String, default: 'pcs' },
+  mrpRate: { type: Number, default: 0, min: 0 },
+  rate: { type: Number, default: 0, min: 0 },
   amount: { type: Number, required: true, min: 0 },
   total: { type: Number, required: true }
 });
@@ -55,7 +57,8 @@ const invoiceSchema = new mongoose.Schema({
     default: 'invoice'
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  strict: false
 });
 
 module.exports = mongoose.model('Invoice', invoiceSchema);

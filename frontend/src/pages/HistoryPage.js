@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import html2pdf from 'html2pdf.js';
 import {
   FiSearch, FiEye, FiEdit2, FiTrash2, FiPrinter,
   FiShare2, FiDownload, FiX, FiFileText
@@ -72,17 +73,6 @@ export default function HistoryPage() {
       toast.error('Failed to generate', { id: toastId });
     }
   };
-  const printQuotation = async () => {
-    setLoadingPrintQuote(true);
-    try {
-      const res = await pdfAPI.generate(invoice._id, 'quotation');
-      printHTML(res.data.html);
-    } catch {
-      toast.error('Failed to print quotation');
-    } finally {
-      setLoadingPrintQuote(false);
-    }
-  };
   // KEY FIX: open window synchronously BEFORE await — browsers block window.open after async
   const handleShareWA = async (invoice, type = 'invoice') => {
 
@@ -114,7 +104,8 @@ ${pdfLink}
 
 Thank you!
 Jeduthun Musicals
-04637-213875`;
+📞 04637-213875
+📱 +91 8838858275`;
 
     navigateWindow(
       waWin,
@@ -144,24 +135,26 @@ const handleDownloadQuotation = async (invoice) => {
 
   try {
 
-    const res = await pdfAPI.downloadPDF(
+    const res = await pdfAPI.generate(
       invoice._id,
       'quotation'
     );
 
-    const pdfLink = res.data.pdfUrl;
+    const html = res.data.html;
+    const fileName = `Quotation-${invoice.invoiceNo}.pdf`;
 
-    const a = document.createElement('a');
+    const element = document.createElement('div');
+    element.innerHTML = html;
 
-    a.href = pdfLink;
+    const opt = {
+      margin: 0,
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
-    a.download = '';
-
-    document.body.appendChild(a);
-
-    a.click();
-
-    a.remove();
+    html2pdf().set(opt).from(element).save();
 
     toast.success(
       'Quotation downloaded!',
@@ -250,10 +243,6 @@ const handleDownloadQuotation = async (invoice) => {
       <div className="flex flex-wrap gap-3 text-xs text-dark-500">
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-400 inline-block"></span> View</span>
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-gold-500 inline-block"></span> Edit</span>
-        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-400 inline-block"></span> Print Bill</span>
-        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> Share Bill (WA)</span>
-        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-400 inline-block"></span> Download Quotation</span>
-        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-pink-400 inline-block"></span> Share Quotation (WA)</span>
         <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Delete</span>
       </div>
 
@@ -302,26 +291,6 @@ const handleDownloadQuotation = async (invoice) => {
                         className="p-1.5 rounded-lg bg-dark-700 text-gold-500 hover:bg-gold-600 hover:text-dark-900 transition-colors">
                         <FiEdit2 size={13} />
                       </button>
-                      {/* Print Bill */}
-                      {/* <button onClick={() => handlePrint(inv, 'invoice')} title="Print Bill"
-                        className="p-1.5 rounded-lg bg-dark-700 text-green-400 hover:bg-green-900 transition-colors">
-                        <FiPrinter size={13} />
-                      </button>
-                      
-                      <button onClick={() => handleShareWA(inv, 'invoice')} title="Share Bill on WhatsApp"
-                        className="p-1.5 rounded-lg bg-dark-700 text-emerald-400 hover:bg-emerald-900 transition-colors">
-                        <FiShare2 size={13} />
-                      </button>
-                      
-                      <button onClick={() => handleDownloadQuotation(inv)} title="Download Quotation PDF"
-                        className="p-1.5 rounded-lg bg-dark-700 text-purple-400 hover:bg-purple-900 transition-colors">
-                        <FiDownload size={13} />
-                      </button>
-                     
-                      <button onClick={() => handleShareWA(inv, 'quotation')} title="Share Quotation on WhatsApp"
-                        className="p-1.5 rounded-lg bg-dark-700 text-pink-400 hover:bg-pink-900 transition-colors">
-                        <FiFileText size={13} />
-                      </button> */}
                       {/* Delete */}
                       <button onClick={() => handleDelete(inv._id)} title="Delete invoice"
                         className="p-1.5 rounded-lg bg-dark-700 text-red-500 hover:bg-red-900 transition-colors">
@@ -395,8 +364,12 @@ const handleDownloadQuotation = async (invoice) => {
                   <span>₹{viewInvoice.subtotal?.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-dark-400">GST ({viewInvoice.gstRate}%)</span>
-                  <span>₹{viewInvoice.gstAmount?.toFixed(2)}</span>
+                  <span className="text-dark-400">CGST ({(viewInvoice.gstRate / 2)}%)</span>
+                  <span>₹{(viewInvoice.gstAmount / 2)?.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-dark-400">SGST ({(viewInvoice.gstRate / 2)}%)</span>
+                  <span>₹{(viewInvoice.gstAmount / 2)?.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-gold-400 text-base border-t border-dark-700 pt-1 mt-1">
                   <span>Total</span><span>{formatCurrency(viewInvoice.totalAmount)}</span>

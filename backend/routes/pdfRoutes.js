@@ -31,21 +31,27 @@ function numberToWords(num) {
 // Generate Invoice HTML
 function generateInvoiceHTML(invoice, shop) {
 
-  const sgstRate = invoice.gstRate / 2;
-  const cgstRate = invoice.gstRate / 2;
+  const sgstRate = invoice.sgstRate || invoice.gstRate / 2;
+  const cgstRate = invoice.cgstRate || invoice.gstRate / 2;
 
-  const sgstAmount = invoice.gstAmount / 2;
-  const cgstAmount = invoice.gstAmount / 2;
+  const sgstAmount = invoice.sgstAmount || invoice.gstAmount / 2;
+  const cgstAmount = invoice.cgstAmount || invoice.gstAmount / 2;
 
-  const items = invoice.items.map((item, i) => `
+  const items = invoice.items.map((item, i) => {
+    const mrpVal = Number(item.mrpRate) || Number(item.rate) || Number(item.amount) || 0;
+    const rateVal = Number(item.rate) || Number(item.amount) || 0;
+    const totalVal = Number(item.total) || 0;
+    return `
     <tr>
       <td class="text-center">${i + 1}</td>
       <td>${item.name}</td>
       <td class="text-center">${item.quantity}</td>
-      <td class="text-right">₹${item.amount.toFixed(2)}</td>
-      <td class="text-right">₹${item.total.toFixed(2)}</td>
+      <td class="text-right">₹${mrpVal.toFixed(2)}</td>
+      <td class="text-right">₹${rateVal.toFixed(2)}</td>
+      <td class="text-right">₹${totalVal.toFixed(2)}</td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 
   return `<!DOCTYPE html>
 <html>
@@ -195,31 +201,37 @@ function generateInvoiceHTML(invoice, shop) {
 
     table th:nth-child(1),
     table td:nth-child(1){
-      width:8%;
+      width:5%;
       text-align:center;
     }
 
     table th:nth-child(2),
     table td:nth-child(2){
-      width:42%;
+      width:30%;
       text-align:left;
     }
 
     table th:nth-child(3),
     table td:nth-child(3){
-      width:15%;
+      width:10%;
       text-align:center;
     }
 
     table th:nth-child(4),
     table td:nth-child(4){
-      width:17%;
+      width:15%;
       text-align:right;
     }
 
     table th:nth-child(5),
     table td:nth-child(5){
-      width:18%;
+      width:15%;
+      text-align:right;
+    }
+
+    table th:nth-child(6),
+    table td:nth-child(6){
+      width:25%;
       text-align:right;
     }
 
@@ -319,7 +331,7 @@ function generateInvoiceHTML(invoice, shop) {
  <div class="shop-header">
 
   <img 
-    src="https://jeduthun.onrender.com/public/logo.png"
+    src="http://localhost:5000/public/logo.png"
     class="logo"
   />
 
@@ -410,6 +422,7 @@ function generateInvoiceHTML(invoice, shop) {
         <th>#</th>
         <th>Description</th>
         <th>Qty</th>
+        <th>MRP Rate</th>
         <th>Rate</th>
         <th>Amount</th>
       </tr>
@@ -503,16 +516,27 @@ function generateInvoiceHTML(invoice, shop) {
 }
 // Generate Quotation HTML
 function generateQuotationHTML(invoice, shop) {
-  const items = invoice.items.map((item, i) => `
+  const sgstRate = invoice.sgstRate || invoice.gstRate / 2;
+  const cgstRate = invoice.cgstRate || invoice.gstRate / 2;
+
+  const sgstAmount = invoice.sgstAmount || invoice.gstAmount / 2;
+  const cgstAmount = invoice.cgstAmount || invoice.gstAmount / 2;
+
+  const items = invoice.items.map((item, i) => {
+    const mrpVal = Number(item.mrpRate) || Number(item.rate) || Number(item.amount) || 0;
+    const rateVal = Number(item.rate) || Number(item.amount) || 0;
+    const totalVal = Number(item.total) || 0;
+    return `
     <tr>
       <td style="border:1px solid #ccc;padding:5px 8px;text-align:center">${i + 1}</td>
       <td style="border:1px solid #ccc;padding:5px 8px">${item.name}</td>
       <td style="border:1px solid #ccc;padding:5px 8px;text-align:center">${item.quantity}</td>
-     
-      <td style="border:1px solid #ccc;padding:5px 8px;text-align:right">₹${item.amount.toFixed(2)}</td>
-      <td style="border:1px solid #ccc;padding:5px 8px;text-align:right">₹${item.total.toFixed(2)}</td>
+      <td style="border:1px solid #ccc;padding:5px 8px;text-align:right">₹${mrpVal.toFixed(2)}</td>
+      <td style="border:1px solid #ccc;padding:5px 8px;text-align:right">₹${rateVal.toFixed(2)}</td>
+      <td style="border:1px solid #ccc;padding:5px 8px;text-align:right">₹${totalVal.toFixed(2)}</td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 
   return `<!DOCTYPE html>
 <html>
@@ -560,7 +584,7 @@ function generateQuotationHTML(invoice, shop) {
  <div class="header">
 
   <img 
-    src="https://jeduthun.onrender.com/public/logo.png"
+    src="http://localhost:5000/public/logo.png"
     class="logo"
   />
 
@@ -594,14 +618,15 @@ function generateQuotationHTML(invoice, shop) {
 
   <table>
     <thead>
-      <tr><th>#</th><th>Product / Description</th><th>Qty</th><th>Price per unit</th><th>Total Price</th></tr>
+      <tr><th>#</th><th>Product / Description</th><th>Qty</th><th>MRP Rate</th><th>Price per unit</th><th>Total Price</th></tr>
     </thead>
     <tbody>${items}</tbody>
   </table>
 
   <div style="margin-left:auto;width:300px;margin-bottom:15px">
     <div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #eee"><span>Subtotal</span><span>₹${invoice.subtotal.toFixed(2)}</span></div>
-    <div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #eee"><span>GST (${invoice.gstRate}%)</span><span>₹${invoice.gstAmount.toFixed(2)}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #eee"><span>CGST (${cgstRate}%)</span><span>₹${cgstAmount.toFixed(2)}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #eee"><span>SGST (${sgstRate}%)</span><span>₹${sgstAmount.toFixed(2)}</span></div>
   </div>
   <div class="total-box">Total Amount: ₹${invoice.totalAmount.toFixed(2)}</div>
 
@@ -687,11 +712,9 @@ router.post('/html', async (req, res) => {
   }
 });
 
-// POST /pdf/download — generates real PDF via puppeteer and sends as download
+// POST /pdf/download — generates HTML file for download/print
 // Body: { invoiceId, type: 'invoice'|'quotation' }
 router.post('/download', async (req, res) => {
-  let browser;
-
   try {
     const { invoiceId, type = 'quotation' } = req.body;
 
@@ -724,42 +747,12 @@ router.post('/download', async (req, res) => {
         ? generateQuotationHTML(invoice, shop)
         : generateInvoiceHTML(invoice, shop);
 
-   const puppeteer = require('puppeteer-core');
-const chromium = require('@sparticuz/chromium');
-
-browser = await puppeteer.launch({
-  args: chromium.args,
-  defaultViewport: chromium.defaultViewport,
-  executablePath: await chromium.executablePath(),
-  headless: chromium.headless,
-});
-
-    const page = await browser.newPage();
-
-    await page.setContent(html, {
-      waitUntil: 'networkidle0'
-    });
-
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        top: '0mm',
-        right: '0mm',
-        bottom: '0mm',
-        left: '0mm'
-      }
-    });
-
-    await browser.close();
-
-    // ===== SAVE PDF =====
-
-    const pdfDir = path.join(__dirname, '../public/pdfs');
+    // ===== SAVE HTML FILE =====
+    const htmlDir = path.join(__dirname, '../public/pdfs');
 
     // create folder if not exists
-    if (!fs.existsSync(pdfDir)) {
-      fs.mkdirSync(pdfDir, { recursive: true });
+    if (!fs.existsSync(htmlDir)) {
+      fs.mkdirSync(htmlDir, { recursive: true });
     }
 
     const label = type === 'quotation'
@@ -770,12 +763,12 @@ browser = await puppeteer.launch({
       .replace(/[^a-zA-Z0-9]/g, '_');
 
     const filename =
-      `${label}-${invoice.invoiceNo}-${safeCustomerName}.pdf`;
+      `${label}-${invoice.invoiceNo}-${safeCustomerName}.html`;
 
-    const filePath = path.join(pdfDir, filename);
+    const filePath = path.join(htmlDir, filename);
 
-    // save file
-    fs.writeFileSync(filePath, pdfBuffer);
+    // save HTML file
+    fs.writeFileSync(filePath, html);
 
     // PUBLIC URL
     const pdfUrl =
@@ -789,11 +782,6 @@ browser = await puppeteer.launch({
     });
 
   } catch (err) {
-
-    if (browser) {
-      await browser.close().catch(() => {});
-    }
-
     console.error('PDF download error:', err.message);
 
     res.status(500).json({
@@ -837,10 +825,9 @@ router.post('/create-share-link', async (req, res) => {
     });
   }
 });
-// POST /pdf/download-from-data — generates PDF from raw invoice data (before save)
+// POST /pdf/download-from-data — generates HTML file from raw invoice data
 // Body: { invoiceData, type }
 router.post('/download-from-data', async (req, res) => {
-  let browser;
   try {
     const { invoiceData, type = 'quotation' } = req.body;
 
@@ -857,37 +844,18 @@ router.post('/download-from-data', async (req, res) => {
       ? generateQuotationHTML(invoiceData, shop)
       : generateInvoiceHTML(invoiceData, shop);
 
-    const puppeteer = require('puppeteer');
-    browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-    });
-
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
-
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: { top: '0mm', right: '0mm', bottom: '0mm', left: '0mm' }
-    });
-
-    await browser.close();
-
     const label = type === 'quotation' ? 'Quotation' : 'Invoice';
     const customerName = invoiceData?.customer?.name?.replace(/\s+/g, '_') || 'Customer';
     const invoiceNo = invoiceData?.invoiceNo || 'DRAFT';
-    const filename = `${label}-${invoiceNo}-${customerName}.pdf`;
+    const filename = `${label}-${invoiceNo}-${customerName}.html`;
 
-    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Type', 'text/html');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.setHeader('Content-Length', pdfBuffer.length);
-    res.send(pdfBuffer);
+    res.send(html);
 
   } catch (err) {
-    if (browser) await browser.close().catch(() => {});
-    console.error('PDF download error:', err.message);
-    res.status(500).json({ success: false, message: 'PDF generation failed: ' + err.message });
+    console.error('HTML generation error:', err.message);
+    res.status(500).json({ success: false, message: 'HTML generation failed: ' + err.message });
   }
 });
 

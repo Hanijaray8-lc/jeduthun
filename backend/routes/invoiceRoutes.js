@@ -67,10 +67,56 @@ router.get('/meta/next-number', async (req, res) => {
 // POST create invoice
 router.post('/', async (req, res) => {
   try {
+    console.log('\n\n==========================================');
+    console.log('📝 RECEIVED INVOICE DATA:');
+    console.log('Item 0:', JSON.stringify(req.body.items?.[0], null, 2));
+    console.log('==========================================\n\n');
+    
     const invoice = new Invoice(req.body);
-    await invoice.save();
-    res.status(201).json({ success: true, data: invoice, message: 'Invoice created successfully' });
+    const saved = await invoice.save();
+    
+    console.log('==========================================');
+    console.log('✨ SAVED IN DB - Item 0:');
+    console.log(JSON.stringify(saved.items?.[0], null, 2));
+    console.log('==========================================\n\n');
+    
+    res.status(201).json({ success: true, data: saved, message: 'Invoice created successfully' });
   } catch (err) {
+    console.error('❌ Error:', err.message);
+    
+    // Handle duplicate invoice number
+    if (err.code === 11000 && err.keyPattern?.invoiceNo) {
+      try {
+        // Get the last invoice and generate next number
+        const last = await Invoice.findOne({ type: 'invoice' }).sort({ createdAt: -1 });
+        let nextNo = 'INV-001';
+        if (last && last.invoiceNo) {
+          const parts = last.invoiceNo.split('-');
+          const num = parseInt(parts[parts.length - 1]) + 1;
+          nextNo = `INV-${String(num).padStart(3, '0')}`;
+        }
+        
+        // Update request body with new invoice number
+        req.body.invoiceNo = nextNo;
+        console.log('⚠️ Duplicate invoice number, using:', nextNo);
+        
+        // Try saving again with new number
+        const invoice = new Invoice(req.body);
+        const saved = await invoice.save();
+        
+        return res.status(201).json({ 
+          success: true, 
+          data: saved, 
+          message: `Invoice created with number ${nextNo}` 
+        });
+      } catch (retryErr) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Failed to create invoice: ' + retryErr.message 
+        });
+      }
+    }
+    
     res.status(400).json({ success: false, message: err.message });
   }
 });
@@ -78,10 +124,23 @@ router.post('/', async (req, res) => {
 // PUT update invoice
 router.put('/:id', async (req, res) => {
   try {
+    console.log('\n\n==========================================');
+    console.log('📝 UPDATING INVOICE:');
+    console.log('Item 0:', JSON.stringify(req.body.items?.[0], null, 2));
+    console.log('==========================================\n\n');
+    
     const invoice = await Invoice.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found' });
+    
+    if (!invoice) {
+      return res.status(404).json({ success: false, message: 'Invoice not found' });
+    }
+    
+    console.log('✨ Updated in DB - Item 0:');
+    console.log(JSON.stringify(invoice.items?.[0], null, 2));
+    
     res.json({ success: true, data: invoice, message: 'Invoice updated successfully' });
   } catch (err) {
+    console.error('❌ Error:', err.message);
     res.status(400).json({ success: false, message: err.message });
   }
 });
