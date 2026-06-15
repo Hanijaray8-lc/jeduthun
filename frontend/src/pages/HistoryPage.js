@@ -131,7 +131,7 @@ Jeduthun Musicals
 const handleDownloadQuotation = async (invoice) => {
 
   const toastId =
-    toast.loading('Preparing quotation for download...');
+    toast.loading('Downloading quotation...');
 
   try {
 
@@ -141,29 +141,34 @@ const handleDownloadQuotation = async (invoice) => {
     );
 
     const html = res.data.html;
-    
-    // Create new window, write HTML, then print to PDF
-    const printWin = window.open('', '_blank');
-    if (!printWin) {
-      toast.error('Please allow popups to download quotations', { id: toastId });
-      return;
-    }
-    
-    printWin.document.write(html);
-    printWin.document.close();
-    
-    // Wait for images to load before printing
-    printWin.onload = () => {
-      setTimeout(() => {
-        printWin.print();
-        toast.success('Print dialog opened - select "Save as PDF"', { id: toastId });
-      }, 500);
+    const fileName = `Quotation-${invoice.invoiceNo}.pdf`;
+
+    const element = document.createElement('div');
+    element.innerHTML = html;
+    document.body.appendChild(element);
+
+    const opt = {
+      margin: 0,
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
+
+    await html2pdf().set(opt).from(element).save();
+    
+    document.body.removeChild(element);
+
+    toast.success(
+      'Quotation downloaded!',
+      { id: toastId }
+    );
 
   } catch (err) {
 
+    console.error('Download error:', err);
     toast.error(
-      'Failed to generate quotation',
+      'Failed to download quotation',
       { id: toastId }
     );
   }

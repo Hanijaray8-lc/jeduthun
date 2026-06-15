@@ -25,21 +25,9 @@ function SavedModal({ invoice, shopData, onClose }) {
   const [loadingPrintQuote, setLoadingPrintQuote] = useState(false);
 
   const buildItemizedMsg = (type, items) => {
-    const itemList = items.map((item) => 
-      `• ${item.name} (Qty: ${item.quantity}) - MRP: ₹${Number(item.mrpRate || 0).toFixed(2)}, Rate: ₹${Number(item.rate || item.amount || 0).toFixed(2)} = ₹${Number(item.total || 0).toFixed(2)}`
-    ).join('\n');
-    
     return `Dear ${invoice.customer.name},
 
 Your ${type === 'quotation' ? 'Quotation' : 'Invoice'} #${invoice.invoiceNo}
-
-📋 Items:
-${itemList}
-
-💰 Summary:
-Subtotal: ₹${invoice.subtotal?.toFixed(2)}
-GST (${invoice.gstRate}%): ₹${invoice.gstAmount?.toFixed(2)}
-Total: ₹${invoice.totalAmount?.toFixed(2)}
 
 Thank you!
 Jeduthun Musicals
@@ -140,33 +128,34 @@ Download PDF: ${pdfLink}`
     );
 
     const html = res.data.html;
-    
-    // Create new window, write HTML, then print to PDF
-    const printWin = window.open('', '_blank');
-    if (!printWin) {
-      toast.error('Please allow popups to download quotations');
-      setLoadingDlQuote(false);
-      return;
-    }
-    
-    printWin.document.write(html);
-    printWin.document.close();
-    
-    // Wait for images to load before printing
-    printWin.onload = () => {
-      setTimeout(() => {
-        printWin.print();
-        toast.success('Print dialog opened - select "Save as PDF"');
-        setLoadingDlQuote(false);
-      }, 500);
+    const fileName = `Quotation-${invoice.invoiceNo}.pdf`;
+
+    const element = document.createElement('div');
+    element.innerHTML = html;
+    document.body.appendChild(element);
+
+    const opt = {
+      margin: 0,
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
+
+    await html2pdf().set(opt).from(element).save();
+    
+    document.body.removeChild(element);
+
+    toast.success('Quotation PDF downloaded!');
 
   } catch (err) {
 
     console.error('❌ Download error:', err);
-    toast.error('Failed to generate quotation');
-    setLoadingDlQuote(false);
+    toast.error('Failed to download quotation');
 
+  } finally {
+
+    setLoadingDlQuote(false);
   }
 };
 
@@ -616,7 +605,7 @@ const totalAmount = subtotal + gstAmount;
             </div>
 
             {items.map((item, idx) => (
-              <div key={idx} className="grid grid-cols-12 gap-2 items-center">
+              <div key={idx} className="grid grid-cols-12 gap-2 items-center mb-4 pb-3 border-b border-dark-700 last:border-0">
                 {/* Product name + search */}
                 <div className="col-span-12 md:col-span-4 relative" ref={searchOpen === idx ? searchRef : null}>
                   <div className="flex gap-1">
@@ -658,13 +647,15 @@ const totalAmount = subtotal + gstAmount;
                 </div>
 
                 {/* Qty */}
-                <div className="col-span-3 md:col-span-1">
+                <div className="col-span-4 sm:col-span-3 md:col-span-1">
+                  <label className="text-xs text-dark-400 md:hidden">Qty</label>
                   <input className="input-field text-center" type="number" min="1" value={item.quantity}
                     onChange={e => updateItem(idx, 'quantity', e.target.value)} />
                 </div>
 
                 {/* MRP Rate */}
-                <div className="col-span-4 md:col-span-2">
+                <div className="col-span-4 sm:col-span-4 md:col-span-2">
+                  <label className="text-xs text-dark-400 md:hidden">MRP</label>
                   <input 
                     className="input-field text-right font-semibold border-blue-500 bg-blue-900 bg-opacity-20" 
                     type="number" 
@@ -673,28 +664,29 @@ const totalAmount = subtotal + gstAmount;
                     onChange={e => updateItem(idx, 'mrpRate', e.target.value)}
                     required
                   />
-                  {/* {!item.mrpRate && <div className="text-xs text-red-500 mt-1">⚠️ Required</div>} */}
                 </div>
 
                 {/* Rate */}
-                <div className="col-span-4 md:col-span-2">
+                <div className="col-span-4 sm:col-span-4 md:col-span-2">
+                  <label className="text-xs text-dark-400 md:hidden">Rate</label>
                   <div className="input-field text-right font-semibold text-gold-400 cursor-default select-none">
                     ₹{(Number(item.rate) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </div>
                 </div>
 
                 {/* Total */}
-                <div className="col-span-3 md:col-span-2">
+                <div className="col-span-7 sm:col-span-6 md:col-span-2">
+                  <label className="text-xs text-dark-400 md:hidden">Total</label>
                   <div className="input-field text-right font-semibold text-gold-400 cursor-default select-none">
                     ₹{(Number(item.total) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </div>
                 </div>
 
                 {/* Remove */}
-                <div className="col-span-1 flex justify-end">
+                <div className="col-span-5 sm:col-span-2 md:col-span-1 flex justify-end">
                   <button onClick={() => removeItem(idx)}
-                    className="p-2 rounded-lg bg-dark-700 text-red-500 hover:bg-red-900 transition-colors">
-                    <FiTrash2 size={14} />
+                    className="p-2 rounded-lg bg-dark-700 text-red-500 hover:bg-red-900 transition-colors w-full md:w-auto">
+                    <FiTrash2 size={14} className="mx-auto md:mx-0" />
                   </button>
                 </div>
               </div>
