@@ -866,9 +866,12 @@ router.post('/create-share-link', async (req, res) => {
       });
     }
 
-    // frontend url
+    // Public URL that serves the downloadable invoice HTML
     const BASE_URL =
-      process.env.FRONTEND_URL || 'https://jeduthun.onrender.com';
+      process.env.PUBLIC_BASE_URL ||
+      process.env.BACKEND_URL ||
+      process.env.FRONTEND_URL ||
+      'https://jeduthun.onrender.com';
 
     // generate public link
     const link = `${BASE_URL}/download-pdf/${invoice._id}?type=${type}`;
@@ -921,6 +924,44 @@ router.post('/download-from-data', async (req, res) => {
   }
 });
 
+// GET /download-pdf/:invoiceId — Public route used by share links
+router.get('/download-pdf/:invoiceId', async (req, res) => {
+  try {
+    const { invoiceId } = req.params;
+    const type = req.query.type || 'invoice';
+
+    const invoice = await Invoice.findById(invoiceId);
+    if (!invoice) {
+      return res.status(404).send('Invoice not found');
+    }
+
+    let shop = await Shop.findOne();
+    if (!shop) {
+      shop = {
+        name: 'Jeduthun Musicals',
+        address: '314A/17, North Main Road, Valliyur, Tirunelveli Dist - 627117, Tamil Nadu',
+        phone1: '04637-213875',
+        phone2: '+91 8838858275',
+        gstNo: '33KVOPS8216M1ZM',
+        email: '',
+        website: 'https://jeduthunmusicals.com/',
+        socialMedia: {},
+        quotationNotes: '1. Transportation charges extra.\n2. Installation is not included in this quote.'
+      };
+    }
+
+    const html = type === 'quotation'
+      ? generateQuotationHTML(invoice, shop)
+      : generateInvoiceHTML(invoice, shop);
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch (err) {
+    console.error('PDF download route error:', err.message);
+    res.status(500).send('Error serving PDF: ' + err.message);
+  }
+});
+
 // GET /pdf/serve/:invoiceId — Serves HTML dynamically (fixes Render ephemeral file system issue)
 router.get('/serve/:invoiceId', async (req, res) => {
   try {
@@ -940,8 +981,6 @@ router.get('/serve/:invoiceId', async (req, res) => {
         phone1: '04637-213875',
         phone2: '+91 8838858275',
         gstNo: '33KVOPS8216M1ZM',
-        email: '',
-        website: 'https://jeduthunmusicals.com/',
         email: '',
         website: 'https://jeduthunmusicals.com/',
         socialMedia: {},

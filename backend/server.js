@@ -12,6 +12,15 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static('public'));
+
+// Public share-link fallback route
+app.get('/download-pdf/:invoiceId', (req, res) => {
+  const query = req.originalUrl.includes('?')
+    ? req.originalUrl.slice(req.originalUrl.indexOf('?'))
+    : '';
+  res.redirect(307, `/api/pdf/download-pdf/${req.params.invoiceId}${query}`);
+});
+
 // Routes
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/invoices', require('./routes/invoiceRoutes'));
