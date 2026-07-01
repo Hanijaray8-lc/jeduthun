@@ -52,21 +52,23 @@ function renderSocialLinks(shop) {
   const links = [];
 
   const iconStyle = 'width:16px;height:16px;display:block;';
+  const phone = shop?.phone1 || shop?.phone2 || '';
+  const formatDetail = (value) => String(value || '').trim().replace(/^https?:\/\//i, '').replace(/^www\./i, '');
 
   if (social.facebook) {
-    links.push(`<a class="social-link" href="${normalizeSocialUrl('facebook', social.facebook)}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" style="${iconStyle}"><path fill="#1877F2" d="M14 8h-3v3H9v2h2v7h3v-7h2l.5-2H14z"/></svg></a>`);
+    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('facebook', social.facebook)}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" style="${iconStyle}"><path fill="#1877F2" d="M14 8h-3v3H9v2h2v7h3v-7h2l.5-2H14z"/></svg></a><div class="social-meta"><div class="social-label">Facebook</div><div class="social-detail">${formatDetail(social.facebook)}</div>${phone ? `<div class="social-detail">Ph: ${phone}</div>` : ''}</div></div>`);
   }
 
   if (social.instagram) {
-    links.push(`<a class="social-link" href="${normalizeSocialUrl('instagram', social.instagram)}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" style="${iconStyle}"><rect x="3" y="3" width="18" height="18" rx="5" fill="#E4405F"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/></svg></a>`);
+    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('instagram', social.instagram)}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" style="${iconStyle}"><rect x="3" y="3" width="18" height="18" rx="5" fill="#E4405F"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/></svg></a><div class="social-meta"><div class="social-label">Instagram</div><div class="social-detail">${formatDetail(social.instagram)}</div>${phone ? `<div class="social-detail">Ph: ${phone}</div>` : ''}</div></div>`);
   }
 
   if (social.youtube) {
-    links.push(`<a class="social-link" href="${normalizeSocialUrl('youtube', social.youtube)}" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg viewBox="0 0 24 24" style="${iconStyle}"><rect x="3" y="5" width="18" height="14" rx="3" fill="#FF0000"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg></a>`);
+    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('youtube', social.youtube)}" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg viewBox="0 0 24 24" style="${iconStyle}"><rect x="3" y="5" width="18" height="14" rx="3" fill="#FF0000"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg></a><div class="social-meta"><div class="social-label">YouTube</div><div class="social-detail">${formatDetail(social.youtube)}</div>${phone ? `<div class="social-detail">Ph: ${phone}</div>` : ''}</div></div>`);
   }
 
   if (social.whatsapp) {
-    links.push(`<a class="social-link" href="${normalizeSocialUrl('whatsapp', social.whatsapp)}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg viewBox="0 0 24 24" style="${iconStyle}"><path fill="#25D366" d="M17.5 6.5A8.4 8.4 0 0 0 4.1 15.6L3 21l5.5-1.4A8.4 8.4 0 1 0 17.5 6.5Z"/><path fill="#fff" d="M16.1 14.3c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.4.1-.1.2-.5.7-.7.8-.1.1-.2.1-.4 0-.6-.2-1.2-.4-1.7-.9-.6-.5-1-1.1-1.4-1.8-.1-.2 0-.3.1-.4l.3-.3c.1-.1.1-.2.2-.3.1-.1 0-.2 0-.3l-.4-1.1c-.1-.3-.2-.3-.4-.3h-.3c-.1 0-.3 0-.4.1-.1.1-.5.5-.7 1.2-.1.4-.1.7.1 1.1.1.2.3.4.4.5.1.2.3.4.4.6.4.6.8 1.1 1.3 1.6.6.6 1.2 1.1 2.1 1.4.4.1.8.1 1.1-.1.2-.1.4-.3.5-.5.1-.2.1-.4.1-.6 0-.1-.1-.2-.2-.3Z"/></svg></a>`);
+    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('whatsapp', social.whatsapp)}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg viewBox="0 0 24 24" style="${iconStyle}"><path fill="#25D366" d="M17.5 6.5A8.4 8.4 0 0 0 4.1 15.6L3 21l5.5-1.4A8.4 8.4 0 1 0 17.5 6.5Z"/><path fill="#fff" d="M16.1 14.3c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.4.1-.1.2-.5.7-.7.8-.1.1-.2.1-.4 0-.6-.2-1.2-.4-1.7-.9-.6-.5-1-1.1-1.4-1.8-.1-.2 0-.3.1-.4l.3-.3c.1-.1.1-.2.2-.3.1-.1 0-.2 0-.3l-.4-1.1c-.1-.3-.2-.3-.4-.3h-.3c-.1 0-.3 0-.4.1-.1.1-.5.5-.7 1.2-.1.4-.1.7.1 1.1.1.2.3.4.4.5.1.2.3.4.4.6.4.6.8 1.1 1.3 1.6.6.6 1.2 1.1 2.1 1.4.4.1.8.1 1.1-.1.2-.1.4-.3.5-.5.1-.2.1-.4.1-.6 0-.1-.1-.2-.2-.3Z"/></svg></a><div class="social-meta"><div class="social-label">WhatsApp</div><div class="social-detail">${formatDetail(social.whatsapp)}</div>${phone ? `<div class="social-detail">Ph: ${phone}</div>` : ''}</div></div>`);
   }
 
   return links.length ? `<div class="social-links">${links.join('')}</div>` : '';
@@ -362,10 +364,18 @@ function generateInvoiceHTML(invoice, shop) {
     .social-links{
       display:flex;
       justify-content:center;
-      align-items:center;
-      gap:6px;
+      align-items:flex-start;
+      gap:8px;
       flex-wrap:wrap;
       margin:4px 0 6px;
+    }
+
+    .social-item{
+      display:flex;
+      align-items:flex-start;
+      gap:5px;
+      min-width:110px;
+      text-align:left;
     }
 
     .social-link{
@@ -378,6 +388,27 @@ function generateInvoiceHTML(invoice, shop) {
       background:#fff;
       box-shadow:0 1px 3px rgba(0,0,0,0.12);
       padding:4px;
+      flex-shrink:0;
+    }
+
+    .social-meta{
+      display:flex;
+      flex-direction:column;
+      line-height:1.2;
+    }
+
+    .social-label{
+      font-size:8px;
+      font-weight:bold;
+      text-transform:uppercase;
+      color:#8B6914;
+      letter-spacing:0.3px;
+    }
+
+    .social-detail{
+      font-size:8px;
+      color:#555;
+      word-break:break-word;
     }
 
   </style>
@@ -670,9 +701,17 @@ function generateQuotationHTML(invoice, shop) {
     line-height:1.6;
     display:flex;
     justify-content:center;
-    align-items:center;
-    gap:6px;
+    align-items:flex-start;
+    gap:8px;
     flex-wrap:wrap;
+}
+
+.footer-social .social-item{
+    display:flex;
+    align-items:flex-start;
+    gap:5px;
+    min-width:110px;
+    text-align:left;
 }
 
 .footer-social .social-link{
@@ -687,10 +726,24 @@ function generateQuotationHTML(invoice, shop) {
     padding:4px;
 }
 
-.footer-social .thankyou{
-    font-size:15px;
+.footer-social .social-meta{
+    display:flex;
+    flex-direction:column;
+    line-height:1.2;
+}
+
+.footer-social .social-label{
+    font-size:8px;
     font-weight:bold;
-    color:#fff;
+    text-transform:uppercase;
+    color:#D4AF37;
+    letter-spacing:0.3px;
+}
+
+.footer-social .social-detail{
+    font-size:8px;
+    color:#e8e8e8;
+    word-break:break-word;
     letter-spacing:0.5px;
 }
 
