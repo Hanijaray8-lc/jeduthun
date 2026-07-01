@@ -28,6 +28,50 @@ function numberToWords(num) {
   return result + ' Only';
 }
 
+function normalizeSocialUrl(platform, value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  if (/^https?:\/\//i.test(raw)) return raw;
+
+  switch (platform) {
+    case 'facebook':
+      return `https://facebook.com/${raw.replace(/^\/+/, '')}`;
+    case 'instagram':
+      return `https://instagram.com/${raw.replace(/^\/+/, '')}`;
+    case 'youtube':
+      return `https://youtube.com/${raw.replace(/^\/+/, '')}`;
+    case 'whatsapp':
+      return `https://wa.me/${raw.replace(/\D/g, '')}`;
+    default:
+      return raw;
+  }
+}
+
+function renderSocialLinks(shop) {
+  const social = shop?.socialMedia || {};
+  const links = [];
+
+  const iconStyle = 'width:16px;height:16px;display:block;';
+
+  if (social.facebook) {
+    links.push(`<a class="social-link" href="${normalizeSocialUrl('facebook', social.facebook)}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" style="${iconStyle}"><path fill="#1877F2" d="M14 8h-3v3H9v2h2v7h3v-7h2l.5-2H14z"/></svg></a>`);
+  }
+
+  if (social.instagram) {
+    links.push(`<a class="social-link" href="${normalizeSocialUrl('instagram', social.instagram)}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" style="${iconStyle}"><rect x="3" y="3" width="18" height="18" rx="5" fill="#E4405F"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/></svg></a>`);
+  }
+
+  if (social.youtube) {
+    links.push(`<a class="social-link" href="${normalizeSocialUrl('youtube', social.youtube)}" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg viewBox="0 0 24 24" style="${iconStyle}"><rect x="3" y="5" width="18" height="14" rx="3" fill="#FF0000"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg></a>`);
+  }
+
+  if (social.whatsapp) {
+    links.push(`<a class="social-link" href="${normalizeSocialUrl('whatsapp', social.whatsapp)}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg viewBox="0 0 24 24" style="${iconStyle}"><path fill="#25D366" d="M17.5 6.5A8.4 8.4 0 0 0 4.1 15.6L3 21l5.5-1.4A8.4 8.4 0 1 0 17.5 6.5Z"/><path fill="#fff" d="M16.1 14.3c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.4.1-.1.2-.5.7-.7.8-.1.1-.2.1-.4 0-.6-.2-1.2-.4-1.7-.9-.6-.5-1-1.1-1.4-1.8-.1-.2 0-.3.1-.4l.3-.3c.1-.1.1-.2.2-.3.1-.1 0-.2 0-.3l-.4-1.1c-.1-.3-.2-.3-.4-.3h-.3c-.1 0-.3 0-.4.1-.1.1-.5.5-.7 1.2-.1.4-.1.7.1 1.1.1.2.3.4.4.5.1.2.3.4.4.6.4.6.8 1.1 1.3 1.6.6.6 1.2 1.1 2.1 1.4.4.1.8.1 1.1-.1.2-.1.4-.3.5-.5.1-.2.1-.4.1-.6 0-.1-.1-.2-.2-.3Z"/></svg></a>`);
+  }
+
+  return links.length ? `<div class="social-links">${links.join('')}</div>` : '';
+}
+
 // Generate Invoice HTML
 function generateInvoiceHTML(invoice, shop) {
 
@@ -315,6 +359,27 @@ function generateInvoiceHTML(invoice, shop) {
       line-height:1.2;
     }
 
+    .social-links{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:6px;
+      flex-wrap:wrap;
+      margin:4px 0 6px;
+    }
+
+    .social-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:24px;
+      height:24px;
+      border-radius:50%;
+      background:#fff;
+      box-shadow:0 1px 3px rgba(0,0,0,0.12);
+      padding:4px;
+    }
+
   </style>
 </head>
 
@@ -513,12 +578,7 @@ function generateInvoiceHTML(invoice, shop) {
 
 <div class="footer-social">
 
-    <div class="social-links">
-      ${shop.socialMedia?.facebook ? `📘 ${shop.socialMedia.facebook} &nbsp;&nbsp;` : ''}
-      ${shop.socialMedia?.instagram ? `📸 ${shop.socialMedia.instagram} &nbsp;&nbsp;` : ''}
-      ${shop.socialMedia?.youtube ? `▶️ ${shop.socialMedia.youtube} &nbsp;&nbsp;` : ''}
-      ${shop.socialMedia?.whatsapp ? `💬 ${shop.socialMedia.whatsapp}` : ''}
-    </div>
+    ${renderSocialLinks(shop)}
     ${shop.website ? `<div class="social-links">🌐 ${shop.website}</div>` : ''}
 
     <div class="thankyou">
@@ -608,6 +668,23 @@ function generateQuotationHTML(invoice, shop) {
     font-size:10px;
     margin-bottom:8px;
     line-height:1.6;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.footer-social .social-link{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,0.2);
+    padding:4px;
 }
 
 .footer-social .thankyou{
@@ -725,12 +802,7 @@ function generateQuotationHTML(invoice, shop) {
   </div>
 
   <div class="footer-social">
-    <div style="font-size:9px">
-      ${shop.socialMedia?.facebook ? `📘 ${shop.socialMedia.facebook}   ` : ''}
-      ${shop.socialMedia?.instagram ? `📸 ${shop.socialMedia.instagram}   ` : ''}
-      ${shop.socialMedia?.youtube ? `▶️ ${shop.socialMedia.youtube}   ` : ''}
-      ${shop.socialMedia?.whatsapp ? `💬 ${shop.socialMedia.whatsapp}` : ''}
-    </div>
+    ${renderSocialLinks(shop)}
     <div style="margin-top:1px">Thank you for considering ${shop.name}!</div>
   </div>
   </div>
