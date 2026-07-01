@@ -25,14 +25,33 @@ function SavedModal({ invoice, shopData, onClose }) {
   const [loadingPrintQuote, setLoadingPrintQuote] = useState(false);
 
   const buildItemizedMsg = (type, items) => {
-    return `Dear ${invoice.customer.name},
+    const lines = [
+      `Dear ${invoice.customer.name},`,
+      '',
+      `Your ${type === 'quotation' ? 'Quotation' : 'Invoice'} #${invoice.invoiceNo}`,
+      '',
+      `Thank you!`,
+      `${shopData?.name || 'Jeduthun Musicals'}`,
+      `📞 ${shopData?.phone1 || '04637-213875'}`,
+      `📱 ${shopData?.phone2 || '+91 8838858275'}`,
+    ];
 
-Your ${type === 'quotation' ? 'Quotation' : 'Invoice'} #${invoice.invoiceNo}
+    if (shopData?.website) {
+      lines.push(`🌐 ${shopData.website}`);
+    }
 
-Thank you!
-Jeduthun Musicals
-📞 ${shopData?.phone1 || '04637-213875'}
-📱 ${shopData?.phone2 || '+91 8838858275'}`;
+    const socials = [
+      shopData?.socialMedia?.facebook ? `Facebook: ${shopData.socialMedia.facebook}` : null,
+      shopData?.socialMedia?.instagram ? `Instagram: ${shopData.socialMedia.instagram}` : null,
+      shopData?.socialMedia?.youtube ? `YouTube: ${shopData.socialMedia.youtube}` : null,
+      shopData?.socialMedia?.whatsapp ? `WhatsApp: ${shopData.socialMedia.whatsapp}` : null,
+    ].filter(Boolean);
+
+    if (socials.length) {
+      lines.push('', 'Connect with us:', ...socials);
+    }
+
+    return lines.join('\n');
   };
 
   // KEY FIX: open window synchronously BEFORE any await
@@ -44,12 +63,12 @@ Jeduthun Musicals
 
   try {
 
-    const res = await pdfAPI.downloadPDF(
+    const res = await pdfAPI.getShareLink(
       invoice._id,
       'invoice'
     );
 
-    const pdfLink = res.data.pdfUrl;
+    const pdfLink = res.data.link;
 
     const itemizedMsg = buildItemizedMsg('invoice', invoice.items);
 
@@ -58,12 +77,26 @@ Jeduthun Musicals
 
 `${itemizedMsg}
 
-Download PDF: ${pdfLink}`
+<${pdfLink}>
+` 
     );
 
     navigateWindow(waWin, whatsappUrl);
 
-    toast.success('WhatsApp opened!');
+    toast.success(
+      <span style={{ display: 'block', wordBreak: 'break-all' }}>
+        WhatsApp opened!<br />
+        <a
+          href={pdfLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#60a5fa', textDecoration: 'underline' }}
+        >
+          {pdfLink}
+        </a>
+      </span>,
+      { duration: 15000 }
+    );
 
   } catch (err) {
 
@@ -84,12 +117,12 @@ Download PDF: ${pdfLink}`
 
   try {
 
-    const res = await pdfAPI.downloadPDF(
+    const res = await pdfAPI.getShareLink(
       invoice._id,
       'quotation'
     );
 
-    const pdfLink = res.data.pdfUrl;
+    const pdfLink = res.data.link;
 
     const itemizedMsg = buildItemizedMsg('quotation', invoice.items);
 
@@ -98,12 +131,26 @@ Download PDF: ${pdfLink}`
 
 `${itemizedMsg}
 
-Download PDF: ${pdfLink}`
+<${pdfLink}>
+` 
     );
 
     navigateWindow(waWin, whatsappUrl);
 
-    toast.success('WhatsApp opened!');
+    toast.success(
+      <span style={{ display: 'block', wordBreak: 'break-all' }}>
+        WhatsApp opened!<br />
+        <a
+          href={pdfLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#60a5fa', textDecoration: 'underline' }}
+        >
+          {pdfLink}
+        </a>
+      </span>,
+      { duration: 15000 }
+    );
 
   } catch (err) {
 
@@ -305,6 +352,23 @@ export default function InvoicePage({ prefillData = null, editId = null }) {
   const [searchQuery, setSearchQuery]   = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const searchRef = useRef(null);
+
+  // Auto-fill customer by phone
+  const handlePhoneChange = async (phone) => {
+    setCustomer(prev => ({ ...prev, phone }));
+    
+    if (phone.length >= 10) {
+      try {
+        const res = await invoiceAPI.getCustomerByPhone(phone);
+        if (res.data.success) {
+          setCustomer(res.data.data);
+          toast.success('Customer found!');
+        }
+      } catch (err) {
+        // Customer not found, allow manual entry
+      }
+    }
+  };
 
   useEffect(() => {
     if (!editId) {
@@ -574,8 +638,17 @@ const totalAmount = subtotal + gstAmount;
             </div>
             <div>
               <label className="label"><FiPhone className="inline mr-1" size={11} />Phone No *</label>
-              <input className="input-field" placeholder="+91 XXXXX XXXXX" value={customer.phone}
-                onChange={e => setCustomer({ ...customer, phone: e.target.value })} />
+              <div className="flex gap-1">
+                <input className="input-field flex-1" placeholder="+91 XXXXX XXXXX" value={customer.phone}
+                  onChange={e => handlePhoneChange(e.target.value)} />
+                {/* <button
+                  type="button"
+                  onClick={() => customer.phone.length >= 10 && handlePhoneChange(customer.phone)}
+                  className="px-2.5 bg-dark-700 border border-dark-600 rounded-lg text-gold-500 hover:bg-gold-500 hover:text-dark-900 transition-colors"
+                  title="Auto-fill customer details from phone number">
+                  <FiSearch size={14} />
+                </button> */}
+              </div>
             </div>
             <div className="md:col-span-2 lg:col-span-4">
               <label className="label"><FiMapPin className="inline mr-1" size={11} />Address</label>
@@ -656,14 +729,9 @@ const totalAmount = subtotal + gstAmount;
                 {/* MRP Rate */}
                 <div className="col-span-4 sm:col-span-4 md:col-span-2">
                   <label className="text-xs text-dark-400 md:hidden">MRP</label>
-                  <input 
-                    className="input-field text-right font-semibold border-blue-500 bg-blue-900 bg-opacity-20" 
-                    type="number" 
-                    placeholder="MRP *" 
-                    value={item.mrpRate}
-                    onChange={e => updateItem(idx, 'mrpRate', e.target.value)}
-                    required
-                  />
+                  <div className="input-field text-right font-semibold text-gold-400 cursor-default select-none">
+                    ₹{(Number(item.mrpRate) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </div>
                 </div>
 
                 {/* Rate */}

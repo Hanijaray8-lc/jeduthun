@@ -75,28 +75,31 @@ function generateInvoiceHTML(invoice, shop) {
 
     .page{
       width:210mm;
-      min-height:297mm;
-      padding:12mm;
+      max-height:297mm;
+      padding:8mm;
       margin:auto;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
     }
 
     /* HEADER */
 
     .top-title{
       text-align:center;
-      font-size:20px;
+      font-size:18px;
       font-weight:bold;
-      letter-spacing:3px;
-      border:2px solid #B8860B;
-      padding:8px;
-      margin-bottom:14px;
+      letter-spacing:2px;
+      border:1px solid #B8860B;
+      padding:5px;
+      margin-bottom:8px;
       color:#111;
     }
 
     .header{
-      border-bottom:3px solid #B8860B;
-      padding-bottom:12px;
-      margin-bottom:15px;
+      border-bottom:2px solid #B8860B;
+      padding-bottom:8px;
+      margin-bottom:8px;
     }
 
     .shop-header{
@@ -107,10 +110,10 @@ function generateInvoiceHTML(invoice, shop) {
   text-align:center;
 }
     .logo{
-  width:150px;
-  height:150px;
+  width:100px;
+  height:100px;
   object-fit:contain;
-  margin-bottom:5px;
+  margin-bottom:2px;
 }
 
     .shop-center{
@@ -119,29 +122,29 @@ function generateInvoiceHTML(invoice, shop) {
     }
 
     .shop-name{
-      font-size:30px;
+      font-size:22px;
       font-weight:bold;
       color:#8B6914;
       letter-spacing:1px;
-      margin-bottom:5px;
+      margin-bottom:2px;
     }
 
     .shop-details{
-      font-size:11px;
+      font-size:10px;
       color:#333;
-      line-height:1.6;
-      margin-top:2px;
+      line-height:1.4;
+      margin-top:0px;
     }
 
     .gst-badge{
       background:#111;
       color:#D4AF37;
-      padding:4px 12px;
-      border-radius:4px;
-      font-size:11px;
+      padding:2px 8px;
+      border-radius:3px;
+      font-size:9px;
       font-weight:bold;
       display:inline-block;
-      margin-top:7px;
+      margin-top:3px;
     }
 
     /* INFO */
@@ -149,28 +152,28 @@ function generateInvoiceHTML(invoice, shop) {
     .info-grid{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:12px;
-      margin-bottom:15px;
+      gap:6px;
+      margin-bottom:8px;
     }
 
     .info-box{
       border:1px solid #ccc;
-      border-radius:5px;
-      padding:10px;
-      min-height:95px;
+      border-radius:3px;
+      padding:6px;
+      min-height:auto;
     }
 
     .info-label{
-      font-size:10px;
+      font-size:9px;
       color:#666;
       text-transform:uppercase;
-      letter-spacing:0.5px;
+      letter-spacing:0.3px;
     }
 
     .info-value{
       font-weight:bold;
-      font-size:13px;
-      margin-top:4px;
+      font-size:12px;
+      margin-top:2px;
     }
 
     /* TABLE */
@@ -178,23 +181,24 @@ function generateInvoiceHTML(invoice, shop) {
     table{
       width:100%;
       border-collapse:collapse;
-      margin-bottom:15px;
+      margin-bottom:6px;
       table-layout:fixed;
+      font-size:10px;
     }
 
     th{
       background:#111;
       color:#D4AF37;
       border:1px solid #333;
-      padding:8px 6px;
-      font-size:11px;
+      padding:4px 3px;
+      font-size:9px;
       text-align:center;
     }
 
     td{
       border:1px solid #ccc;
-      padding:7px 6px;
-      font-size:11px;
+      padding:3px 3px;
+      font-size:10px;
       vertical-align:middle;
       word-wrap:break-word;
     }
@@ -246,7 +250,7 @@ function generateInvoiceHTML(invoice, shop) {
     /* TOTALS */
 
     .totals{
-      width:320px;
+      width:280px;
       margin-left:auto;
       border:1px solid #ddd;
     }
@@ -254,17 +258,17 @@ function generateInvoiceHTML(invoice, shop) {
     .total-row{
       display:flex;
       justify-content:space-between;
-      padding:8px 10px;
+      padding:4px 6px;
       border-bottom:1px solid #eee;
-      font-size:12px;
+      font-size:10px;
     }
 
     .grand-total{
       background:#111;
       color:#D4AF37;
       font-weight:bold;
-      font-size:15px;
-      padding:10px;
+      font-size:12px;
+      padding:6px;
       display:flex;
       justify-content:space-between;
     }
@@ -272,43 +276,43 @@ function generateInvoiceHTML(invoice, shop) {
     /* WORDS */
 
     .words-box{
-      margin-top:12px;
+      margin-top:6px;
       border:1px solid #D4AF37;
       background:#fffbf0;
-      padding:10px;
-      font-size:11px;
-      line-height:1.6;
+      padding:6px;
+      font-size:10px;
+      line-height:1.4;
     }
 
     /* FOOTER */
 
     .footer{
-      margin-top:25px;
-      padding-top:12px;
-      border-top:2px solid #B8860B;
+      margin-top:auto;
+      padding-top:6px;
+      border-top:1px solid #B8860B;
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:10px;
+      gap:6px;
     }
 
     .bank-details{
-      font-size:11px;
-      line-height:1.7;
+      font-size:10px;
+      line-height:1.4;
     }
 
     .sign-box{
       text-align:right;
-      font-size:11px;
+      font-size:10px;
     }
 
     .social-footer{
-      margin-top:14px;
-      padding-top:10px;
+      margin-top:2px;
+      padding-top:2px;
       border-top:1px solid #eee;
       text-align:center;
-      font-size:10px;
+      font-size:9px;
       color:#666;
-      line-height:1.7;
+      line-height:1.2;
     }
 
   </style>
@@ -350,6 +354,8 @@ function generateInvoiceHTML(invoice, shop) {
         <div class="shop-details">
           Ph : ${shop.phone1} | ${shop.phone2}
         </div>
+        ${shop.website ? `<div class="shop-details">Website: ${shop.website}</div>` : ''}
+        ${shop.email ? `<div class="shop-details">Email: ${shop.email}</div>` : ''}
 
         <span class="gst-badge">
           GSTIN : ${shop.gstNo || 'N/A'}
@@ -375,11 +381,11 @@ function generateInvoiceHTML(invoice, shop) {
         ${invoice.customer.name}
       </div>
 
-      <div style="margin-top:5px">
+      <div style="margin-top:2px;font-size:10px">
         ${invoice.customer.phone}
       </div>
 
-      <div style="font-size:10px;color:#555;margin-top:5px;line-height:1.5">
+      <div style="font-size:9px;color:#555;margin-top:2px;line-height:1.3">
         ${invoice.customer.address || ''}
       </div>
 
@@ -387,14 +393,14 @@ function generateInvoiceHTML(invoice, shop) {
 
     <div class="info-box">
 
-      <div style="margin-bottom:8px">
+      <div style="margin-bottom:4px">
         <span class="info-label">Invoice No :</span>
-        <strong>${invoice.invoiceNo}</strong>
+        <strong style="font-size:11px">${invoice.invoiceNo}</strong>
       </div>
 
       <div>
         <span class="info-label">Date :</span>
-<strong>
+<strong style="font-size:10px">
         ${new Date(invoice.date).toLocaleString('en-IN', {
   timeZone: 'Asia/Kolkata',
   day: '2-digit',
@@ -470,15 +476,25 @@ function generateInvoiceHTML(invoice, shop) {
 
   </div>
 
+  ${shop.bankName || shop.accountNo || shop.ifscCode || shop.upiId || shop.accountHolder ? `
+  <div class="payment-box">
+    <div class="info-label">Payment Information</div>
+    ${shop.bankName ? `<div class="info-value" style="font-size:10px;font-weight:normal;">Bank: ${shop.bankName}</div>` : ''}
+    ${shop.accountHolder ? `<div class="info-value" style="font-size:10px;font-weight:normal;">Account Name: ${shop.accountHolder}</div>` : ''}
+    ${shop.accountNo ? `<div class="info-value" style="font-size:10px;font-weight:normal;">Account No: ${shop.accountNo}</div>` : ''}
+    ${shop.ifscCode ? `<div class="info-value" style="font-size:10px;font-weight:normal;">IFSC Code: ${shop.ifscCode}</div>` : ''}
+    ${shop.upiId ? `<div class="info-value" style="font-size:10px;font-weight:normal;">UPI ID: ${shop.upiId}</div>` : ''}
+  </div>` : ''}
+
   <!-- FOOTER -->
 
   <div class="footer">
 
     <div class="bank-details">
 
-      <p style="font-size:12px;font-weight:bold;color:#8B6914;margin-bottom:6px">
+      <p style="font-size:10px;font-weight:bold;color:#8B6914;margin-bottom:0px;line-height:1.3">
 
-        Terms & Conditions :
+        Terms & Conditions :<br/>
         Goods once sold cannot be taken back.
 
       </p>
@@ -495,19 +511,25 @@ function generateInvoiceHTML(invoice, shop) {
 
   <!-- SOCIAL -->
 
-  <div class="social-footer">
+<div class="footer-social">
 
-    ${shop.socialMedia?.facebook ? `FB : ${shop.socialMedia.facebook} &nbsp;&nbsp;` : ''}
+    <div class="social-links">
+      ${shop.socialMedia?.facebook ? `📘 ${shop.socialMedia.facebook} &nbsp;&nbsp;` : ''}
+      ${shop.socialMedia?.instagram ? `📸 ${shop.socialMedia.instagram} &nbsp;&nbsp;` : ''}
+      ${shop.socialMedia?.youtube ? `▶️ ${shop.socialMedia.youtube} &nbsp;&nbsp;` : ''}
+      ${shop.socialMedia?.whatsapp ? `💬 ${shop.socialMedia.whatsapp}` : ''}
+    </div>
+    ${shop.website ? `<div class="social-links">🌐 ${shop.website}</div>` : ''}
 
-    ${shop.socialMedia?.instagram ? `IG : ${shop.socialMedia.instagram} &nbsp;&nbsp;` : ''}
+    <div class="thankyou">
+        Thank You For Considering ${shop.name}!
+    </div>
 
-    ${shop.socialMedia?.youtube ? `YT : ${shop.socialMedia.youtube}` : ''}
+    <div class="subtext">
+        We appreciate the opportunity to serve you.
+    </div>
 
-    <br/>
-
-    Thank you for visiting us!
-
-  </div>
+</div>
 
 </div>
 
@@ -544,8 +566,8 @@ function generateQuotationHTML(invoice, shop) {
   <meta charset="UTF-8">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; font-size: 12px; color: #111; background: white; }
-    .page { width: 210mm; min-height: 297mm; padding: 15mm; margin: 0 auto; }
+    body { font-family: Arial, sans-serif; font-size: 11px; color: #111; background: white; }
+    .page { width: 210mm; max-height: 297mm; padding: 8mm; margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; }
     .header { 
       position: relative;
       display: flex;
@@ -554,30 +576,58 @@ function generateQuotationHTML(invoice, shop) {
       justify-content: center;
       background: linear-gradient(135deg, #1a1a1a, #2d2d2d); 
       color: #D4AF37; 
-      padding: 30px 20px 20px 20px;
-      margin-bottom: 20px; 
-      border-radius: 4px;
+      padding: 12px 12px 10px 12px;
+      margin-bottom: 8px; 
+      border-radius: 3px;
       text-align: center;
-      border-bottom: 3px solid #B8860B;
+      border-bottom: 2px solid #B8860B;
     }
-    .shop-name { font-size: 24px; font-weight: bold; letter-spacing: 2px; }
-    .shop-sub { font-size: 10px; color: #c0a060; margin-top: 4px; }
-    .quot-title { font-size: 22px; font-weight: bold; letter-spacing: 4px; text-align: center; color: #1a1a1a; border: 2px solid #B8860B; padding: 8px; margin-bottom: 15px; text-transform: uppercase; }
-    .client-box { background: #fffbf0; border-left: 4px solid #D4AF37; padding: 12px; margin-bottom: 15px; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-    th { background: #1a1a1a; color: #D4AF37; padding: 8px; text-align: center; border: 1px solid #333; font-size: 11px; }
-    .total-box { background: #1a1a1a; color: #D4AF37; text-align: right; padding: 12px 15px; font-size: 16px; font-weight: bold; }
-    .words { background: #f9f3e3; border: 1px solid #D4AF37; padding: 10px; margin-bottom: 15px; font-size: 11px; }
-    .payment-box { border: 1px solid #D4AF37; padding: 12px; margin-bottom: 15px; border-radius: 4px; }
-    .notes-box { background: #fff8e7; border-left: 4px solid #ff8c00; padding: 10px; margin-bottom: 15px; font-size: 11px; }
-    .contact-box { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-    .footer-social { text-align: center; background: #1a1a1a; color: #D4AF37; padding: 8px; border-radius: 4px; font-size: 10px; margin-top: 10px; }
+    .shop-name { font-size: 18px; font-weight: bold; letter-spacing: 1px; }
+    .shop-sub { font-size: 9px; color: #c0a060; margin-top: 2px; line-height: 1.3; }
+    .quot-title { font-size: 16px; font-weight: bold; letter-spacing: 2px; text-align: center; color: #1a1a1a; border: 1px solid #B8860B; padding: 4px; margin-bottom: 8px; text-transform: uppercase; }
+    .client-box { background: #fffbf0; border-left: 3px solid #D4AF37; padding: 8px; margin-bottom: 8px; font-size: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 10px; }
+    th { background: #1a1a1a; color: #D4AF37; padding: 4px 3px; text-align: center; border: 1px solid #333; font-size: 9px; }
+    td { border: 1px solid #ccc; padding: 2px 3px; font-size: 10px; }
+    .total-box { background: #1a1a1a; color: #D4AF37; text-align: right; padding: 6px 8px; font-size: 13px; font-weight: bold; }
+    .words { background: #f9f3e3; border: 1px solid #D4AF37; padding: 6px; margin-bottom: 6px; font-size: 10px; line-height: 1.3; }
+    .payment-box { border: 1px solid #D4AF37; padding: 8px; margin-bottom: 6px; border-radius: 3px; font-size: 10px; }
+    .notes-box { background: #fff8e7; border-left: 3px solid #ff8c00; padding: 6px; margin-bottom: 6px; font-size: 9px; line-height: 1.3; }
+    .contact-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; font-size: 10px; }
+    .footer-social{
+    text-align:center;
+    background:linear-gradient(135deg,#1a1a1a,#2d2d2d);
+    color:#D4AF37;
+    padding:10px 15px;
+    border-radius:6px;
+    margin-top:10px;
+    border-top:2px solid #D4AF37;
+}
+
+.footer-social .social-links{
+    font-size:10px;
+    margin-bottom:8px;
+    line-height:1.6;
+}
+
+.footer-social .thankyou{
+    font-size:15px;
+    font-weight:bold;
+    color:#fff;
+    letter-spacing:0.5px;
+}
+
+.footer-social .subtext{
+    font-size:10px;
+    color:#d8d8d8;
+    margin-top:4px;
+}
     .logo {
       position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 80px;
-      height: 80px;
+      top: 0;
+      right: 0;
+      width: 70px;
+      height: 70px;
       object-fit: contain;
     }
   </style>
@@ -606,17 +656,19 @@ function generateQuotationHTML(invoice, shop) {
   <div class="shop-sub">
     GSTIN: ${shop.gstNo}
   </div>
+  ${shop.website ? `<div class="shop-sub">Website: ${shop.website}</div>` : ''}
+  ${shop.email ? `<div class="shop-sub">Email: ${shop.email}</div>` : ''}
 
 </div>
 
   <div class="quot-title">Quotation</div>
 
   <div class="client-box">
-    <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px">To</div>
-    <div style="font-size:15px;font-weight:bold;color:#1a1a1a;margin:3px 0">${invoice.customer.name}</div>
-    <div>${invoice.customer.phone}</div>
-    ${invoice.customer.address ? `<div style="color:#555;font-size:11px">${invoice.customer.address}</div>` : ''}
-    <div style="margin-top:6px;font-size:11px"><strong>Ref No:</strong> ${invoice.invoiceNo} &nbsp;&nbsp; <strong>Date:</strong> ${new Date(invoice.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+    <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:0.5px">To</div>
+    <div style="font-size:13px;font-weight:bold;color:#1a1a1a;margin:2px 0">${invoice.customer.name}</div>
+    <div style="font-size:10px">${invoice.customer.phone}</div>
+    ${invoice.customer.address ? `<div style="color:#555;font-size:9px">${invoice.customer.address}</div>` : ''}
+    <div style="margin-top:4px;font-size:9px"><strong>Ref No:</strong> ${invoice.invoiceNo} &nbsp;&nbsp; <strong>Date:</strong> ${new Date(invoice.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
   </div>
 
   <table>
@@ -626,10 +678,10 @@ function generateQuotationHTML(invoice, shop) {
     <tbody>${items}</tbody>
   </table>
 
-  <div style="margin-left:auto;width:300px;margin-bottom:15px">
-    <div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #eee"><span>Subtotal</span><span>₹${invoice.subtotal.toFixed(2)}</span></div>
-    <div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #eee"><span>CGST (${cgstRate}%)</span><span>₹${cgstAmount.toFixed(2)}</span></div>
-    <div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid #eee"><span>SGST (${sgstRate}%)</span><span>₹${sgstAmount.toFixed(2)}</span></div>
+  <div style="margin-left:auto;width:280px;margin-bottom:6px">
+    <div style="display:flex;justify-content:space-between;padding:2px 6px;border-bottom:1px solid #eee;font-size:10px"><span>Subtotal</span><span>₹${invoice.subtotal.toFixed(2)}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:2px 6px;border-bottom:1px solid #eee;font-size:10px"><span>CGST (${cgstRate}%)</span><span>₹${cgstAmount.toFixed(2)}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:2px 6px;border-bottom:1px solid #eee;font-size:10px"><span>SGST (${sgstRate}%)</span><span>₹${sgstAmount.toFixed(2)}</span></div>
   </div>
   <div class="total-box">Total Amount: ₹${invoice.totalAmount.toFixed(2)}</div>
 
@@ -639,43 +691,48 @@ function generateQuotationHTML(invoice, shop) {
 
   ${shop.bankName || shop.accountNo ? `
   <div class="payment-box">
-    <div style="font-size:13px;font-weight:bold;color:#8B6914;margin-bottom:8px">Payment Information</div>
-    ${shop.bankName ? `<div><strong>Bank:</strong> ${shop.bankName}</div>` : ''}
-    ${shop.accountHolder ? `<div><strong>Account Name:</strong> ${shop.accountHolder}</div>` : ''}
-    ${shop.accountNo ? `<div><strong>Account No:</strong> ${shop.accountNo}</div>` : ''}
-    ${shop.ifscCode ? `<div><strong>IFSC Code:</strong> ${shop.ifscCode}</div>` : ''}
-    ${shop.upiId ? `<div><strong>UPI ID:</strong> ${shop.upiId}</div>` : ''}
+    <div style="font-size:11px;font-weight:bold;color:#8B6914;margin-bottom:4px">Payment Information</div>
+    ${shop.bankName ? `<div style="font-size:10px"><strong>Bank:</strong> ${shop.bankName}</div>` : ''}
+    ${shop.accountHolder ? `<div style="font-size:10px"><strong>Account Name:</strong> ${shop.accountHolder}</div>` : ''}
+    ${shop.accountNo ? `<div style="font-size:10px"><strong>Account No:</strong> ${shop.accountNo}</div>` : ''}
+    ${shop.ifscCode ? `<div style="font-size:10px"><strong>IFSC Code:</strong> ${shop.ifscCode}</div>` : ''}
+    ${shop.upiId ? `<div style="font-size:10px"><strong>UPI ID:</strong> ${shop.upiId}</div>` : ''}
   </div>` : ''}
 
   <div class="contact-box">
     <div>
-      <div style="font-size:13px;font-weight:bold;color:#8B6914;margin-bottom:6px">Contact Information</div>
-      <div>${shop.name}</div>
-      <div>${shop.address}</div>
-      <div>Ph: ${shop.phone1}</div>
-      <div>Mob: ${shop.phone2}</div>
-      ${shop.email ? `<div>Email: ${shop.email}</div>` : ''}
-      <div>GSTIN: ${shop.gstNo}</div>
+      <div style="font-size:11px;font-weight:bold;color:#8B6914;margin-bottom:3px">Contact</div>
+      <div style="font-size:10px">${shop.name}</div>
+      <div style="font-size:9px">${shop.address}</div>
+      <div style="font-size:10px">Ph: ${shop.phone1}</div>
+      <div style="font-size:10px">Mob: ${shop.phone2}</div>
+      ${shop.email ? `<div style="font-size:10px">Email: ${shop.email}</div>` : ''}
+      <div style="font-size:10px">GSTIN: ${shop.gstNo}</div>
     </div>
-    <div style="text-align:right">
-      <div style="font-size:11px;color:#666;margin-bottom:30px"></div>
-      <div style="border-top:1px solid #ccc;padding-top:8px">
+    <div style="text-align:right;font-size:10px">
+      <div style="color:#666;margin-bottom:20px"></div>
+      <div style="border-top:1px solid #ccc;padding-top:4px">
         
       </div>
     </div>
   </div>
 
-  <div class="notes-box">
-    <strong>Note:</strong><br/>
-    ${(shop.quotationNotes || '1. Transportation charges extra.\n2. Installation is not included in this quote.').split('\n').join('<br/>')}
+  <div class="notes-box" style="margin-top:4px">
+    <strong style="font-size:10px">Note:</strong><br/>
+    <div style="font-size:9px">
+      ${(shop.quotationNotes || '1. Transportation charges extra.\\n2. Installation is not included in this quote.').split('\n').join('<br/>')}
+    </div>
   </div>
 
   <div class="footer-social">
-    ${shop.socialMedia?.facebook ? `📘 ${shop.socialMedia.facebook}   ` : ''}
-    ${shop.socialMedia?.instagram ? `📸 ${shop.socialMedia.instagram}   ` : ''}
-    ${shop.socialMedia?.youtube ? `▶️ ${shop.socialMedia.youtube}   ` : ''}
-    ${shop.socialMedia?.whatsapp ? `💬 ${shop.socialMedia.whatsapp}` : ''}
-    <br/>Thank you for considering ${shop.name}!
+    <div style="font-size:9px">
+      ${shop.socialMedia?.facebook ? `📘 ${shop.socialMedia.facebook}   ` : ''}
+      ${shop.socialMedia?.instagram ? `📸 ${shop.socialMedia.instagram}   ` : ''}
+      ${shop.socialMedia?.youtube ? `▶️ ${shop.socialMedia.youtube}   ` : ''}
+      ${shop.socialMedia?.whatsapp ? `💬 ${shop.socialMedia.whatsapp}` : ''}
+    </div>
+    <div style="margin-top:1px">Thank you for considering ${shop.name}!</div>
+  </div>
   </div>
 </div>
 </body>
@@ -690,7 +747,7 @@ router.post('/generate', async (req, res) => {
     if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found' });
 
     let shop = await Shop.findOne();
-    if (!shop) shop = { name: 'Jeduthun Musicals', address: '314A/17, North Main Road, Valliyur', phone1: '04637-213875', phone2: '+91 8838858275', gstNo: '33KVOPS8216M1ZM', socialMedia: {}, quotationNotes: '1. Transportation charges extra.\n2. Installation is not included in this quote.' };
+    if (!shop) shop = { name: 'Jeduthun Musicals', address: '314A/17, North Main Road, Valliyur', phone1: '04637-213875', phone2: '+91 8838858275', gstNo: '33KVOPS8216M1ZM', website: 'https://jeduthunmusicals.com/', socialMedia: {}, quotationNotes: '1. Transportation charges extra.\n2. Installation is not included in this quote.' };
 
     const html = type === 'quotation' ? generateQuotationHTML(invoice, shop) : generateInvoiceHTML(invoice, shop);
 
@@ -706,7 +763,7 @@ router.post('/html', async (req, res) => {
   try {
     const { invoiceData, type } = req.body;
     let shop = await Shop.findOne();
-    if (!shop) shop = { name: 'Jeduthun Musicals', address: '314A/17, North Main Road, Valliyur', phone1: '04637-213875', phone2: '+91 8838858275', gstNo: '33KVOPS8216M1ZM', socialMedia: {}, quotationNotes: '1. Transportation charges extra.\n2. Installation is not included in this quote.' };
+    if (!shop) shop = { name: 'Jeduthun Musicals', address: '314A/17, North Main Road, Valliyur', phone1: '04637-213875', phone2: '+91 8838858275', gstNo: '33KVOPS8216M1ZM', website: 'https://jeduthunmusicals.com/', socialMedia: {}, quotationNotes: '1. Transportation charges extra.\n2. Installation is not included in this quote.' };
 
     const html = type === 'quotation' ? generateQuotationHTML(invoiceData, shop) : generateInvoiceHTML(invoiceData, shop);
     res.json({ success: true, html });
@@ -739,6 +796,7 @@ router.post('/download', async (req, res) => {
         phone1: '04637-213875',
         phone2: '+91 8838858275',
         gstNo: '33KVOPS8216M1ZM',
+        website: 'https://jeduthunmusicals.com/',
         socialMedia: {},
         quotationNotes:
           '1. Transportation charges extra.\n2. Installation is not included in this quote.'
@@ -773,9 +831,10 @@ router.post('/download', async (req, res) => {
     // save HTML file
     fs.writeFileSync(filePath, html);
 
-    // PUBLIC URL
-    const pdfUrl =
-      `${req.protocol}://${req.get('host')}/public/pdfs/${filename}`;
+    // PUBLIC URL - Force HTTPS on Render
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+    const host = req.get('host');
+    const pdfUrl = `${protocol}://${host}/api/pdf/serve/${invoiceId}?type=${type}`;
 
     // RETURN JSON
     return res.json({
@@ -839,7 +898,7 @@ router.post('/download-from-data', async (req, res) => {
       name: 'Jeduthun Musicals',
       address: '314A/17, North Main Road, Valliyur, Tirunelveli Dist - 627117, Tamil Nadu',
       phone1: '04637-213875', phone2: '+91 8838858275',
-      gstNo: '33KVOPS8216M1ZM', socialMedia: {},
+      gstNo: '33KVOPS8216M1ZM', website: 'https://jeduthunmusicals.com/', socialMedia: {},
       quotationNotes: '1. Transportation charges extra.\n2. Installation is not included in this quote.'
     };
 
@@ -859,6 +918,46 @@ router.post('/download-from-data', async (req, res) => {
   } catch (err) {
     console.error('HTML generation error:', err.message);
     res.status(500).json({ success: false, message: 'HTML generation failed: ' + err.message });
+  }
+});
+
+// GET /pdf/serve/:invoiceId — Serves HTML dynamically (fixes Render ephemeral file system issue)
+router.get('/serve/:invoiceId', async (req, res) => {
+  try {
+    const { invoiceId } = req.params;
+    const type = req.query.type || 'invoice';
+
+    const invoice = await Invoice.findById(invoiceId);
+    if (!invoice) {
+      return res.status(404).json({ success: false, message: 'Invoice not found' });
+    }
+
+    let shop = await Shop.findOne();
+    if (!shop) {
+      shop = {
+        name: 'Jeduthun Musicals',
+        address: '314A/17, North Main Road, Valliyur, Tirunelveli Dist - 627117, Tamil Nadu',
+        phone1: '04637-213875',
+        phone2: '+91 8838858275',
+        gstNo: '33KVOPS8216M1ZM',
+        email: '',
+        website: 'https://jeduthunmusicals.com/',
+        email: '',
+        website: 'https://jeduthunmusicals.com/',
+        socialMedia: {},
+        quotationNotes: '1. Transportation charges extra.\n2. Installation is not included in this quote.'
+      };
+    }
+
+    const html = type === 'quotation'
+      ? generateQuotationHTML(invoice, shop)
+      : generateInvoiceHTML(invoice, shop);
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  } catch (err) {
+    console.error('PDF serve error:', err.message);
+    res.status(500).json({ success: false, message: 'Error serving PDF: ' + err.message });
   }
 });
 

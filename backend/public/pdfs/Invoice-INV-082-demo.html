@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:Arial,sans-serif;
+      font-size:12px;
+      color:#111;
+      background:#fff;
+    }
+
+    .page{
+      width:210mm;
+      max-height:297mm;
+      padding:8mm;
+      margin:auto;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* HEADER */
+
+    .top-title{
+      text-align:center;
+      font-size:18px;
+      font-weight:bold;
+      letter-spacing:2px;
+      border:1px solid #B8860B;
+      padding:5px;
+      margin-bottom:8px;
+      color:#111;
+    }
+
+    .header{
+      border-bottom:2px solid #B8860B;
+      padding-bottom:8px;
+      margin-bottom:8px;
+    }
+
+    .shop-header{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+    .logo{
+  width:100px;
+  height:100px;
+  object-fit:contain;
+  margin-bottom:2px;
+}
+
+    .shop-center{
+      flex:1;
+      text-align:center;
+    }
+
+    .shop-name{
+      font-size:22px;
+      font-weight:bold;
+      color:#8B6914;
+      letter-spacing:1px;
+      margin-bottom:2px;
+    }
+
+    .shop-details{
+      font-size:10px;
+      color:#333;
+      line-height:1.4;
+      margin-top:0px;
+    }
+
+    .gst-badge{
+      background:#111;
+      color:#D4AF37;
+      padding:2px 8px;
+      border-radius:3px;
+      font-size:9px;
+      font-weight:bold;
+      display:inline-block;
+      margin-top:3px;
+    }
+
+    /* INFO */
+
+    .info-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+      margin-bottom:8px;
+    }
+
+    .info-box{
+      border:1px solid #ccc;
+      border-radius:3px;
+      padding:6px;
+      min-height:auto;
+    }
+
+    .info-label{
+      font-size:9px;
+      color:#666;
+      text-transform:uppercase;
+      letter-spacing:0.3px;
+    }
+
+    .info-value{
+      font-weight:bold;
+      font-size:12px;
+      margin-top:2px;
+    }
+
+    /* TABLE */
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-bottom:6px;
+      table-layout:fixed;
+      font-size:10px;
+    }
+
+    th{
+      background:#111;
+      color:#D4AF37;
+      border:1px solid #333;
+      padding:4px 3px;
+      font-size:9px;
+      text-align:center;
+    }
+
+    td{
+      border:1px solid #ccc;
+      padding:3px 3px;
+      font-size:10px;
+      vertical-align:middle;
+      word-wrap:break-word;
+    }
+
+    table th:nth-child(1),
+    table td:nth-child(1){
+      width:5%;
+      text-align:center;
+    }
+
+    table th:nth-child(2),
+    table td:nth-child(2){
+      width:30%;
+      text-align:left;
+    }
+
+    table th:nth-child(3),
+    table td:nth-child(3){
+      width:10%;
+      text-align:center;
+    }
+
+    table th:nth-child(4),
+    table td:nth-child(4){
+      width:15%;
+      text-align:right;
+    }
+
+    table th:nth-child(5),
+    table td:nth-child(5){
+      width:15%;
+      text-align:right;
+    }
+
+    table th:nth-child(6),
+    table td:nth-child(6){
+      width:25%;
+      text-align:right;
+    }
+
+    .text-right{
+      text-align:right;
+    }
+
+    .text-center{
+      text-align:center;
+    }
+
+    /* TOTALS */
+
+    .totals{
+      width:280px;
+      margin-left:auto;
+      border:1px solid #ddd;
+    }
+
+    .total-row{
+      display:flex;
+      justify-content:space-between;
+      padding:4px 6px;
+      border-bottom:1px solid #eee;
+      font-size:10px;
+    }
+
+    .grand-total{
+      background:#111;
+      color:#D4AF37;
+      font-weight:bold;
+      font-size:12px;
+      padding:6px;
+      display:flex;
+      justify-content:space-between;
+    }
+
+    /* WORDS */
+
+    .words-box{
+      margin-top:6px;
+      border:1px solid #D4AF37;
+      background:#fffbf0;
+      padding:6px;
+      font-size:10px;
+      line-height:1.4;
+    }
+
+    /* FOOTER */
+
+    .footer{
+      margin-top:auto;
+      padding-top:6px;
+      border-top:1px solid #B8860B;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:6px;
+    }
+
+    .bank-details{
+      font-size:10px;
+      line-height:1.4;
+    }
+
+    .sign-box{
+      text-align:right;
+      font-size:10px;
+    }
+
+    .social-footer{
+      margin-top:2px;
+      padding-top:2px;
+      border-top:1px solid #eee;
+      text-align:center;
+      font-size:9px;
+      color:#666;
+      line-height:1.2;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <!-- TOP TITLE -->
+
+  <div class="top-title">
+    TAX INVOICE
+  </div>
+
+  <!-- HEADER -->
+
+  <div class="header">
+
+ <div class="shop-header">
+
+  <img 
+    src="https://jeduthun.onrender.com/public/logo.png"
+    class="logo"
+  />
+
+ 
+
+      <div class="shop-center">
+
+        <div class="shop-name">
+          Jeduthun Musicals
+        </div>
+
+        <div class="shop-details">
+          314A/17, North Main Road, Valliyur, Tirunelveli Dist - 627117, Tamil Nadu
+        </div>
+
+        <div class="shop-details">
+          Ph : 04637-213875 | +91 8838858275
+        </div>
+        <div class="shop-details">Website: https://jeduthunmusicals.com/</div>
+        <div class="shop-details">Email: jeduthunmusicals@gmail.com</div>
+
+        <span class="gst-badge">
+          GSTIN : 33KVOPS8216M1ZM
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- CUSTOMER INFO -->
+
+  <div class="info-grid">
+
+    <div class="info-box">
+
+      <div class="info-label">
+        Bill To
+      </div>
+
+      <div class="info-value">
+        demo
+      </div>
+
+      <div style="margin-top:2px;font-size:10px">
+        +91 9894342309
+      </div>
+
+      <div style="font-size:9px;color:#555;margin-top:2px;line-height:1.3">
+        
+      </div>
+
+    </div>
+
+    <div class="info-box">
+
+      <div style="margin-bottom:4px">
+        <span class="info-label">Invoice No :</span>
+        <strong style="font-size:11px">INV-082</strong>
+      </div>
+
+      <div>
+        <span class="info-label">Date :</span>
+<strong style="font-size:10px">
+        30 June 2026 at 18:19:01
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ITEMS TABLE -->
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Description</th>
+        <th>Qty</th>
+        <th>MRP Rate</th>
+        <th>Rate</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      
+    <tr>
+      <td class="text-center">1</td>
+      <td>CLAYTON ACOUSTIC GUITAR CAG300C BK</td>
+      <td class="text-center">1</td>
+      <td class="text-right">₹7300.00</td>
+      <td class="text-right">₹6186.44</td>
+      <td class="text-right">₹6186.44</td>
+    </tr>
+  
+    </tbody>
+
+  </table>
+
+  <!-- TOTALS -->
+
+  <div class="totals">
+
+    <div class="total-row">
+      <span>Subtotal</span>
+      <span>₹6186.44</span>
+    </div>
+
+    <div class="total-row">
+      <span>SGST (9%)</span>
+      <span>₹556.78</span>
+    </div>
+
+    <div class="total-row">
+      <span>CGST (9%)</span>
+      <span>₹556.78</span>
+    </div>
+
+    <div class="grand-total">
+      <span>TOTAL</span>
+      <span>₹7300.00</span>
+    </div>
+
+  </div>
+
+  <!-- WORDS -->
+
+  <div class="words-box">
+
+    <strong>Amount in Words :</strong>
+
+    Seven Thousand Three Hundred Rupees Only
+
+  </div>
+
+  
+  <div class="payment-box">
+    <div class="info-label">Payment Information</div>
+    <div class="info-value" style="font-size:10px;font-weight:normal;">Bank: Indian Overseas Bank</div>
+    <div class="info-value" style="font-size:10px;font-weight:normal;">Account Name: Jeduthun Musicals</div>
+    <div class="info-value" style="font-size:10px;font-weight:normal;">Account No: 188102000099999</div>
+    <div class="info-value" style="font-size:10px;font-weight:normal;">IFSC Code: IOBA0001881</div>
+    
+  </div>
+
+  <!-- FOOTER -->
+
+  <div class="footer">
+
+    <div class="bank-details">
+
+      <p style="font-size:10px;font-weight:bold;color:#8B6914;margin-bottom:0px;line-height:1.3">
+
+        Terms & Conditions :<br/>
+        Goods once sold cannot be taken back.
+
+      </p>
+
+    </div>
+
+    <div class="sign-box">
+
+      
+
+    </div>
+
+  </div>
+
+  <!-- SOCIAL -->
+
+<div class="footer-social">
+
+    <div class="social-links">
+      
+      📸 @jeduthun_musicals &nbsp;&nbsp;
+      
+      💬 +918903885875
+    </div>
+    <div class="social-links">🌐 https://jeduthunmusicals.com/</div>
+
+    <div class="thankyou">
+        Thank You For Considering Jeduthun Musicals!
+    </div>
+
+    <div class="subtext">
+        We appreciate the opportunity to serve you.
+    </div>
+
+</div>
+
+</div>
+
+</body>
+</html>

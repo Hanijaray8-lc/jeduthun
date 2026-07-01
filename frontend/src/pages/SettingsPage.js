@@ -11,6 +11,7 @@ export default function SettingsPage() {
     phone2: '+91 8838858275',
     gstNo: '33KVOPS8216M1ZM',
     email: '',
+    website: 'https://jeduthunmusicals.com/',
     bankName: '',
     accountNo: '',
     ifscCode: '',
@@ -32,6 +33,7 @@ export default function SettingsPage() {
         phone2: d.phone2 || '',
         gstNo: d.gstNo || '',
         email: d.email || '',
+        website: d.website || 'https://jeduthunmusicals.com/',
         bankName: d.bankName || '',
         accountNo: d.accountNo || '',
         ifscCode: d.ifscCode || '',
@@ -104,6 +106,7 @@ export default function SettingsPage() {
             <label className="label">Email</label>
             <input className="input-field" type="email" placeholder="shop@email.com" value={form.email} onChange={e => set('email', e.target.value)} />
           </div>
+          
         </div>
       </div>
 
@@ -159,6 +162,10 @@ export default function SettingsPage() {
           <div>
             <label className="label">WhatsApp Number</label>
             <input className="input-field" placeholder="+91 XXXXX XXXXX" value={form.socialMedia.whatsapp} onChange={e => setSocial('whatsapp', e.target.value)} />
+          </div>
+          <div>
+            <label className="label">Website</label>
+            <input className="input-field" placeholder="https://jeduthunmusicals.com/" value={form.website} onChange={e => set('website', e.target.value)} />
           </div>
         </div>
       </div>

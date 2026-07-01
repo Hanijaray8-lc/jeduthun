@@ -7,6 +7,7 @@ const shopSchema = new mongoose.Schema({
   phone2: { type: String, default: '+91 8838858275' },
   gstNo: { type: String, default: '33KVOPS8216M1ZM' },
   email: { type: String, default: '' },
+  website: { type: String, default: 'https://jeduthunmusicals.com/' },
   bankName: { type: String, default: '' },
   accountNo: { type: String, default: '' },
   ifscCode: { type: String, default: '' },

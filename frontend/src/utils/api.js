@@ -16,6 +16,7 @@ export const invoiceAPI = {
   getAll: (params = {}) => API.get('/invoices', { params }),
   getOne: (id) => API.get(`/invoices/${id}`),
   getNextNumber: () => API.get('/invoices/meta/next-number'),
+  getCustomerByPhone: (phone) => API.get(`/invoices/customer/by-phone/${encodeURIComponent(phone)}`),
   create: (data) => API.post('/invoices', data),
   update: (id, data) => API.put(`/invoices/${id}`, data),
   delete: (id) => API.delete(`/invoices/${id}`),

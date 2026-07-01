@@ -82,12 +82,12 @@ export default function HistoryPage() {
 
   try {
 
-    const res = await pdfAPI.downloadPDF(
+    const res = await pdfAPI.getShareLink(
       invoice._id,
       type
     );
 
-    const pdfLink = res.data.pdfUrl;
+    const pdfLink = res.data.link;
 
     const label =
       type === 'quotation'
@@ -99,8 +99,7 @@ export default function HistoryPage() {
 
 Your ${label} #${invoice.invoiceNo}
 
-Download PDF:
-${pdfLink}
+<${pdfLink}>
 
 Thank you!
 Jeduthun Musicals
@@ -113,8 +112,36 @@ Jeduthun Musicals
     );
 
     toast.success(
-      'WhatsApp opened!',
-      { id: toastId }
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', wordBreak: 'break-all' }}>
+        <span>WhatsApp opened!</span>
+        <a
+          href={pdfLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#60a5fa', textDecoration: 'underline' }}
+        >
+          {pdfLink}
+        </a>
+        <button
+          type="button"
+          onClick={() => {
+            navigator.clipboard.writeText(pdfLink);
+            toast.success('Link copied to clipboard');
+          }}
+          style={{
+            border: '1px solid #60a5fa',
+            background: 'transparent',
+            color: '#60a5fa',
+            borderRadius: '6px',
+            padding: '6px 10px',
+            cursor: 'pointer',
+            alignSelf: 'flex-start'
+          }}
+        >
+          Copy link
+        </button>
+      </div>,
+      { id: toastId, duration: 15000 }
     );
 
   } catch (err) {
@@ -223,7 +250,7 @@ const handleDownloadQuotation = async (invoice) => {
               value={filterYear}
               onChange={e => { setFilterYear(e.target.value); setFilterDate(''); }}
             >
-              <option value="">All Years</option>
+              <option value="">2026</option>
               {years.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
           </div>

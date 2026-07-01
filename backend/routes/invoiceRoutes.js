@@ -37,18 +37,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET single invoice
-router.get('/:id', async (req, res) => {
-  try {
-    const invoice = await Invoice.findById(req.params.id);
-    if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found' });
-    res.json({ success: true, data: invoice });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
-
-// GET next invoice number
+// GET next invoice number (before /:id to avoid being caught by it)
 router.get('/meta/next-number', async (req, res) => {
   try {
     const last = await Invoice.findOne({ type: 'invoice' }).sort({ createdAt: -1 });
@@ -59,6 +48,31 @@ router.get('/meta/next-number', async (req, res) => {
       nextNo = `INV-${String(num).padStart(3, '0')}`;
     }
     res.json({ success: true, nextNo });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// GET customer by phone (before /:id to avoid being caught by it)
+router.get('/customer/by-phone/:phone', async (req, res) => {
+  try {
+    const { phone } = req.params;
+    const invoice = await Invoice.findOne({ 'customer.phone': phone }).sort({ createdAt: -1 });
+    if (!invoice) {
+      return res.status(404).json({ success: false, message: 'Customer not found' });
+    }
+    res.json({ success: true, data: { name: invoice.customer.name, address: invoice.customer.address, phone: invoice.customer.phone } });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// GET single invoice
+router.get('/:id', async (req, res) => {
+  try {
+    const invoice = await Invoice.findById(req.params.id);
+    if (!invoice) return res.status(404).json({ success: false, message: 'Invoice not found' });
+    res.json({ success: true, data: invoice });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
