@@ -52,23 +52,22 @@ function renderSocialLinks(shop) {
   const links = [];
 
   const iconStyle = 'width:16px;height:16px;display:block;';
-  const phone = shop?.phone1 || shop?.phone2 || '';
   const formatDetail = (value) => String(value || '').trim().replace(/^https?:\/\//i, '').replace(/^www\./i, '');
 
   if (social.facebook) {
-    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('facebook', social.facebook)}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" style="${iconStyle}"><path fill="#1877F2" d="M14 8h-3v3H9v2h2v7h3v-7h2l.5-2H14z"/></svg></a><div class="social-meta"><div class="social-label">Facebook</div><div class="social-detail">${formatDetail(social.facebook)}</div>${phone ? `<div class="social-detail">Ph: ${phone}</div>` : ''}</div></div>`);
+    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('facebook', social.facebook)}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" style="${iconStyle}"><path fill="#1877F2" d="M14 8h-3v3H9v2h2v7h3v-7h2l.5-2H14z"/></svg></a><div class="social-meta"><div class="social-label">Facebook</div><div class="social-detail">${formatDetail(social.facebook)}</div></div></div>`);
   }
 
   if (social.instagram) {
-    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('instagram', social.instagram)}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" style="${iconStyle}"><rect x="3" y="3" width="18" height="18" rx="5" fill="#E4405F"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/></svg></a><div class="social-meta"><div class="social-label">Instagram</div><div class="social-detail">${formatDetail(social.instagram)}</div>${phone ? `<div class="social-detail">Ph: ${phone}</div>` : ''}</div></div>`);
+    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('instagram', social.instagram)}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" style="${iconStyle}"><rect x="3" y="3" width="18" height="18" rx="5" fill="#E4405F"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/></svg></a><div class="social-meta"><div class="social-label">Instagram</div><div class="social-detail">${formatDetail(social.instagram)}</div></div></div>`);
   }
 
   if (social.youtube) {
-    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('youtube', social.youtube)}" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg viewBox="0 0 24 24" style="${iconStyle}"><rect x="3" y="5" width="18" height="14" rx="3" fill="#FF0000"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg></a><div class="social-meta"><div class="social-label">YouTube</div><div class="social-detail">${formatDetail(social.youtube)}</div>${phone ? `<div class="social-detail">Ph: ${phone}</div>` : ''}</div></div>`);
+    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('youtube', social.youtube)}" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><svg viewBox="0 0 24 24" style="${iconStyle}"><rect x="3" y="5" width="18" height="14" rx="3" fill="#FF0000"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg></a><div class="social-meta"><div class="social-label">YouTube</div><div class="social-detail">${formatDetail(social.youtube)}</div></div></div>`);
   }
 
   if (social.whatsapp) {
-    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('whatsapp', social.whatsapp)}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg viewBox="0 0 24 24" style="${iconStyle}"><path fill="#25D366" d="M17.5 6.5A8.4 8.4 0 0 0 4.1 15.6L3 21l5.5-1.4A8.4 8.4 0 1 0 17.5 6.5Z"/><path fill="#fff" d="M16.1 14.3c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.4.1-.1.2-.5.7-.7.8-.1.1-.2.1-.4 0-.6-.2-1.2-.4-1.7-.9-.6-.5-1-1.1-1.4-1.8-.1-.2 0-.3.1-.4l.3-.3c.1-.1.1-.2.2-.3.1-.1 0-.2 0-.3l-.4-1.1c-.1-.3-.2-.3-.4-.3h-.3c-.1 0-.3 0-.4.1-.1.1-.5.5-.7 1.2-.1.4-.1.7.1 1.1.1.2.3.4.4.5.1.2.3.4.4.6.4.6.8 1.1 1.3 1.6.6.6 1.2 1.1 2.1 1.4.4.1.8.1 1.1-.1.2-.1.4-.3.5-.5.1-.2.1-.4.1-.6 0-.1-.1-.2-.2-.3Z"/></svg></a><div class="social-meta"><div class="social-label">WhatsApp</div><div class="social-detail">${formatDetail(social.whatsapp)}</div>${phone ? `<div class="social-detail">Ph: ${phone}</div>` : ''}</div></div>`);
+    links.push(`<div class="social-item"><a class="social-link" href="${normalizeSocialUrl('whatsapp', social.whatsapp)}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg viewBox="0 0 24 24" style="${iconStyle}"><path fill="#25D366" d="M17.5 6.5A8.4 8.4 0 0 0 4.1 15.6L3 21l5.5-1.4A8.4 8.4 0 1 0 17.5 6.5Z"/><path fill="#fff" d="M16.1 14.3c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.4.1-.1.2-.5.7-.7.8-.1.1-.2.1-.4 0-.6-.2-1.2-.4-1.7-.9-.6-.5-1-1.1-1.4-1.8-.1-.2 0-.3.1-.4l.3-.3c.1-.1.1-.2.2-.3.1-.1 0-.2 0-.3l-.4-1.1c-.1-.3-.2-.3-.4-.3h-.3c-.1 0-.3 0-.4.1-.1.1-.5.5-.7 1.2-.1.4-.1.7.1 1.1.1.2.3.4.4.5.1.2.3.4.4.6.4.6.8 1.1 1.3 1.6.6.6 1.2 1.1 2.1 1.4.4.1.8.1 1.1-.1.2-.1.4-.3.5-.5.1-.2.1-.4.1-.6 0-.1-.1-.2-.2-.3Z"/></svg></a><div class="social-meta"><div class="social-label">WhatsApp</div><div class="social-detail">${formatDetail(social.whatsapp)}</div></div></div>`);
   }
 
   return links.length ? `<div class="social-links">${links.join('')}</div>` : '';
